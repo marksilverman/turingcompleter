@@ -3,8 +3,10 @@
 <head>
     <meta charset="utf-8">
     <style type="text/css">
+        body {
+            margin: 20px;
+        }
         html, body, button {
-            margin: 2px;
             font-family: monospace;
             font-size: 20px;
         }
@@ -19,11 +21,12 @@
 
 <body onload="main();">
     <p>
+        Turing Completer<br>
         <div id="msg"></div>
         <div id="tableContainer"></div>
         <br>
-        <input type="button" value="reset" onClick="reset()"/>
-        <br>
+        <input type="button" value="RESET" onClick="reset()"/>
+        <br><br>
         <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
     </p>
 
@@ -52,7 +55,7 @@ function createCheckbox(row, id, value)
     return checkbox;
 }
 
-function createFilter(id1, value1, id2, value2, id3, value3)
+function createFilter(id1, value1, id2='', value2='', id3='', value3='')
 {
     var row = document.createElement("tr");
     var cb1 = createCheckbox(row, id1, value1);
@@ -67,11 +70,19 @@ document.getElementById("tableContainer").appendChild(filterTable);
  
 [bSmallest, ySmallest, pSmallest] = createFilter("bSmallest", "blue is smallest", "ySmallest", "yellow is smallest", "pSmallest", "purple is smallest");
 [bLargest, yLargest, pLargest] = createFilter("bLargest", "blue is largest", "yLargest", "yellow is largest", "pLargest", "purple is largest");
+
 [blueEQ3, blueGT3, blueLT3] = createFilter("blueEQ3", "blue == 3", "blueGT3", "blue > 3", "blueLT3", "blue < 3");
 [yellowEQ3, yellowGT3, yellowLT3] = createFilter("yellowEQ3", "yellow == 3", "yellowGT3", "yellow > 3", "yellowLT3", "yellow < 3");
-[totalEven, totalOdd] = createFilter("totalEven", "total is even", "totalOdd", "total is odd", "", "");
-[moreEvens, moreOdds] = createFilter("moreEvens", "more evens", "moreOdds", "more odds", "", "");
-[ascending, descending] = createFilter("ascending", "ascending", "descending", "descending", "", "");
+[purpleEQ3, purpleGT3, purpleLT3] = createFilter("purpleEQ3", "purple == 3", "purpleGT3", "purple > 3", "purpleLT3", "purple < 3");
+
+[byLT6, byEQ6, byGT6] = createFilter("byLT6", "blue + yellow < 6", "byEQ6", "blue + yellow == 6", "byGT6", "blue + yellow > 6");
+[totalEven, totalOdd] = createFilter("totalEven", "total is even", "totalOdd", "total is odd");
+[moreEvens, moreOdds] = createFilter("moreEvens", "more evens", "moreOdds", "more odds");
+[ascending, descending] = createFilter("ascending", "ascending", "descending", "descending");
+
+[blueEven, blueOdd] = createFilter("blueEven", "blue is even", "blueOdd", "blue is odd");
+[yellowEven, yellowOdd] = createFilter("yellowEven", "yellow is even", "yellowOdd", "yellow is odd");
+[purpleEven, purpleOdd] = createFilter("purpleEven", "purple is even", "purpleOdd", "purple is odd");
 
 var solution = [];
 for (let b = 1; b <= 5; b++)
@@ -113,23 +124,46 @@ function refresh()
         var p = item.purple;
         
         if (bSmallest.checked && (b >= y || b >= p)) include = false;
-        if (document.getElementById("ySmallest").checked && (y >= p || y >= b)) include = false;
-        if (document.getElementById("pSmallest").checked && (p >= b || p >= y)) include = false;
+        if (ySmallest.checked && (y >= p || y >= b)) include = false;
+        if (pSmallest.checked && (p >= b || p >= y)) include = false;
 
-        if (document.getElementById("bLargest").checked && (b <= y || b <= p)) include = false;
-        if (document.getElementById("yLargest").checked && (y <= p || y <= b)) include = false;
-        if (document.getElementById("pLargest").checked && (p <= b || p <= y)) include = false;
+        if (bLargest.checked && (b <= y || b <= p)) include = false;
+        if (yLargest.checked && (y <= p || y <= b)) include = false;
+        if (pLargest.checked && (p <= b || p <= y)) include = false;
 
-        if (document.getElementById("blueEQ3").checked && b != 3) include = false;
-        if (document.getElementById("blueGT3").checked && b <= 3) include = false;
-        if (document.getElementById("blueLT3").checked && b >= 3) include = false;
-        if (document.getElementById("yellowEQ3").checked && y != 3) include = false;
-        if (document.getElementById("yellowGT3").checked && y <= 3) include = false;
-        if (document.getElementById("yellowLT3").checked && y >= 3) include = false;
-        if (document.getElementById("ascending").checked && (b >= y || y >= p)) include = false;
-        if (document.getElementById("descending").checked && (b <= y || y <= p)) include = false;
-        if (document.getElementById("moreEvens").checked && ((b % 2 + y % 2 + p % 2) >= 2)) include = false;
-        if (document.getElementById("moreOdds").checked && ((b % 2 + y % 2 + p % 2) < 2)) include = false;
+        if (blueEQ3.checked && b != 3) include = false;
+        if (blueGT3.checked && b <= 3) include = false;
+        if (blueLT3.checked && b >= 3) include = false;
+        
+        if (yellowEQ3.checked && y != 3) include = false;
+        if (yellowGT3.checked && y <= 3) include = false;
+        if (yellowLT3.checked && y >= 3) include = false;
+
+        if (purpleEQ3.checked && p != 3) include = false;
+        if (purpleGT3.checked && p <= 3) include = false;
+        if (purpleLT3.checked && p >= 3) include = false;
+        
+        if (byLT6.checked && b + y >= 6) include = false;
+        if (byEQ6.checked && b + y != 6) include = false;
+        if (byGT6.checked && b + y <= 6) include = false;
+
+        if (blueEven.checked && (b % 2)) include = false;
+        if (blueOdd.checked && !(b % 2)) include = false;
+        
+        if (yellowEven.checked && (y % 2)) include = false;
+        if (yellowOdd.checked && !(y % 2)) include = false;
+        
+        if (purpleEven.checked && (p % 2)) include = false;
+        if (purpleOdd.checked && !(p % 2)) include = false;
+        
+        if (ascending.checked && (b >= y || y >= p)) include = false;
+        if (descending.checked && (b <= y || y <= p)) include = false;
+
+        if (moreEvens.checked && ((b % 2 + y % 2 + p % 2) >= 2)) include = false;
+        if (moreOdds.checked && ((b % 2 + y % 2 + p % 2) < 2)) include = false;
+
+        if (totalEven.checked && (b + y + p) % 2) include = false;
+        if (totalOdd.checked && !((b + y + p) % 2)) include = false;
 
         if (y != prev_yellow)
         {
