@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style type="text/css">
+        canvas {
+            border: 1px solid black;
+            margin: 10px;
+        }
+        html, body, button {
+            margin: 2px;
+            font-family: monospace;
+            font-size: 20px;
+        }
+    </style>
+    <title>Turing Completer</title>
+</head>
+
+<body onload="main();">
+    <p>
+        <div id="msg"></div>
+        <table id="table">
+            <tr>
+                <td><label>blue == 3</label><input tabindex="1" type="checkbox" id="blueEQ3" onchange="refresh();"></td>
+                <td><label>blue > 3</label><input tabindex="1" type="checkbox" id="blueGT3" onchange="refresh();"></td>
+                <td><label>blue < 3</label><input tabindex="1" type="checkbox" id="blueLT3" onchange="refresh();"></td>
+            </tr>
+            <tr>
+                <td><label>yellow == 3</label><input tabindex="1" type="checkbox" id="yellowEQ3" onchange="refresh();"></td>
+                <td><label>yellow > 3</label><input tabindex="1" type="checkbox" id="yellowGT3" onchange="refresh();"></td>
+                <td><label>yellow < 3</label><input tabindex="1" type="checkbox" id="yellowLT3" onchange="refresh();"></td>
+            </tr>
+        </table>
+        <div id="msg"></div>
+        <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+    </p>
+
+<script>
+   
+function msg(info) { document.getElementById("msg").innerHTML += info; }
+function reset_msg() { document.getElementById("msg").innerHTML = ""; }
+
+var solution = [];
+var included = [];
+var i = 0;
+for (let b = 1; b <= 5; b++)
+{
+    for (let y = 1; y <= 5; y++)
+    {
+        for (let p = 1; p <= 5; p++)
+        {
+            var tuple = { };
+            tuple.blue = b;
+            tuple.yellow = y;
+            tuple.purple = p;
+            tuple.key = b.toString() + y.toString() + p.toString();
+            solution[i] = tuple;
+            i += 1;
+            included[tuple.key] = true;
+        }
+    }
+}
+
+function refresh()
+{
+    reset_msg();
+    var prev_blue = -1;
+    var prev_yellow = 1;
+    for (const item of solution)
+    {
+        var include = true;
+
+        if (document.getElementById("blueEQ3").checked && item.blue != 3) include = false;
+        if (document.getElementById("blueGT3").checked && item.blue <= 3) include = false;
+        if (document.getElementById("blueLT3").checked && item.blue >= 3) include = false;
+        if (document.getElementById("yellowEQ3").checked && item.yellow != 3) include = false;
+        if (document.getElementById("yellowGT3").checked && item.yellow <= 3) include = false;
+        if (document.getElementById("yellowLT3").checked && item.yellow >= 3) include = false;
+
+        if (item.yellow != prev_yellow)
+        {
+            if (item.blue != prev_blue)
+                msg('<br>');
+            else
+                msg(' | ');
+        }
+        else if (item.blue == prev_blue)
+        {
+            msg(' ');
+        }
+
+        if (include)
+        {
+            msg(item.blue);
+            msg(item.yellow);
+            msg(item.purple);
+        }
+        else
+            msg('...');
+        
+        prev_blue = item.blue;
+        prev_yellow = item.yellow;
+    }
+}
+refresh();
+
+</script>
+</body>
+</html>
