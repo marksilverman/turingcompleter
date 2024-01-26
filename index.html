@@ -3,14 +3,15 @@
 <head>
     <meta charset="utf-8">
     <style type="text/css">
-        canvas {
-            border: 1px solid black;
-            margin: 10px;
-        }
         html, body, button {
             margin: 2px;
             font-family: monospace;
             font-size: 20px;
+        }
+        table {
+            table-layout: fixed;
+            width: 80%;
+            border: 1px solid;
         }
     </style>
     <title>Turing Completer</title>
@@ -19,19 +20,10 @@
 <body onload="main();">
     <p>
         <div id="msg"></div>
-        <table id="table">
-            <tr>
-                <td><label>blue == 3</label><input tabindex="1" type="checkbox" id="blueEQ3" onchange="refresh();"></td>
-                <td><label>blue > 3</label><input tabindex="1" type="checkbox" id="blueGT3" onchange="refresh();"></td>
-                <td><label>blue < 3</label><input tabindex="1" type="checkbox" id="blueLT3" onchange="refresh();"></td>
-            </tr>
-            <tr>
-                <td><label>yellow == 3</label><input tabindex="1" type="checkbox" id="yellowEQ3" onchange="refresh();"></td>
-                <td><label>yellow > 3</label><input tabindex="1" type="checkbox" id="yellowGT3" onchange="refresh();"></td>
-                <td><label>yellow < 3</label><input tabindex="1" type="checkbox" id="yellowLT3" onchange="refresh();"></td>
-            </tr>
-        </table>
-        <div id="msg"></div>
+        <div id="tableContainer"></div>
+        <br>
+        <input type="button" value="reset" onClick="reset()"/>
+        <br>
         <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
     </p>
 
@@ -40,9 +32,48 @@
 function msg(info) { document.getElementById("msg").innerHTML += info; }
 function reset_msg() { document.getElementById("msg").innerHTML = ""; }
 
+function createCheckbox(row, id, value)
+{
+    if (id == '') return null;
+
+    var checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = id;
+    checkbox.onchange = function(){ refresh() };
+
+    var label = document.createElement("label");
+    label.htmlFor = id;
+    label.textContent = value;
+
+    var cell = document.createElement("td");
+    cell.appendChild(checkbox);
+    cell.appendChild(label);
+    row.appendChild(cell);
+    return checkbox;
+}
+
+function createFilter(id1, value1, id2, value2, id3, value3)
+{
+    var row = document.createElement("tr");
+    var cb1 = createCheckbox(row, id1, value1);
+    var cb2 = createCheckbox(row, id2, value2);
+    var cb3 = createCheckbox(row, id3, value3);
+    filterTable.appendChild(row);
+    return [cb1, cb2, cb3];
+}
+
+var filterTable = document.createElement("table");
+document.getElementById("tableContainer").appendChild(filterTable);
+ 
+[bSmallest, ySmallest, pSmallest] = createFilter("bSmallest", "blue is smallest", "ySmallest", "yellow is smallest", "pSmallest", "purple is smallest");
+[bLargest, yLargest, pLargest] = createFilter("bLargest", "blue is largest", "yLargest", "yellow is largest", "pLargest", "purple is largest");
+[blueEQ3, blueGT3, blueLT3] = createFilter("blueEQ3", "blue == 3", "blueGT3", "blue > 3", "blueLT3", "blue < 3");
+[yellowEQ3, yellowGT3, yellowLT3] = createFilter("yellowEQ3", "yellow == 3", "yellowGT3", "yellow > 3", "yellowLT3", "yellow < 3");
+[totalEven, totalOdd] = createFilter("totalEven", "total is even", "totalOdd", "total is odd", "", "");
+[moreEvens, moreOdds] = createFilter("moreEvens", "more evens", "moreOdds", "more odds", "", "");
+[ascending, descending] = createFilter("ascending", "ascending", "descending", "descending", "", "");
+
 var solution = [];
-var included = [];
-var i = 0;
 for (let b = 1; b <= 5; b++)
 {
     for (let y = 1; y <= 5; y++)
@@ -54,11 +85,18 @@ for (let b = 1; b <= 5; b++)
             tuple.yellow = y;
             tuple.purple = p;
             tuple.key = b.toString() + y.toString() + p.toString();
-            solution[i] = tuple;
-            i += 1;
-            included[tuple.key] = true;
+            solution.push(tuple);
         }
     }
+}
+
+function reset()
+{
+    for (const input of document.getElementsByTagName('input'))
+    {
+        if (input.type == "checkbox") input.checked = false;
+    }
+    refresh();
 }
 
 function refresh()
@@ -66,41 +104,59 @@ function refresh()
     reset_msg();
     var prev_blue = -1;
     var prev_yellow = 1;
+    var count = 0;
     for (const item of solution)
     {
         var include = true;
+        var b = item.blue;
+        var y = item.yellow;
+        var p = item.purple;
+        
+        if (bSmallest.checked && (b >= y || b >= p)) include = false;
+        if (document.getElementById("ySmallest").checked && (y >= p || y >= b)) include = false;
+        if (document.getElementById("pSmallest").checked && (p >= b || p >= y)) include = false;
 
-        if (document.getElementById("blueEQ3").checked && item.blue != 3) include = false;
-        if (document.getElementById("blueGT3").checked && item.blue <= 3) include = false;
-        if (document.getElementById("blueLT3").checked && item.blue >= 3) include = false;
-        if (document.getElementById("yellowEQ3").checked && item.yellow != 3) include = false;
-        if (document.getElementById("yellowGT3").checked && item.yellow <= 3) include = false;
-        if (document.getElementById("yellowLT3").checked && item.yellow >= 3) include = false;
+        if (document.getElementById("bLargest").checked && (b <= y || b <= p)) include = false;
+        if (document.getElementById("yLargest").checked && (y <= p || y <= b)) include = false;
+        if (document.getElementById("pLargest").checked && (p <= b || p <= y)) include = false;
 
-        if (item.yellow != prev_yellow)
+        if (document.getElementById("blueEQ3").checked && b != 3) include = false;
+        if (document.getElementById("blueGT3").checked && b <= 3) include = false;
+        if (document.getElementById("blueLT3").checked && b >= 3) include = false;
+        if (document.getElementById("yellowEQ3").checked && y != 3) include = false;
+        if (document.getElementById("yellowGT3").checked && y <= 3) include = false;
+        if (document.getElementById("yellowLT3").checked && y >= 3) include = false;
+        if (document.getElementById("ascending").checked && (b >= y || y >= p)) include = false;
+        if (document.getElementById("descending").checked && (b <= y || y <= p)) include = false;
+        if (document.getElementById("moreEvens").checked && ((b % 2 + y % 2 + p % 2) >= 2)) include = false;
+        if (document.getElementById("moreOdds").checked && ((b % 2 + y % 2 + p % 2) < 2)) include = false;
+
+        if (y != prev_yellow)
         {
-            if (item.blue != prev_blue)
+            if (b != prev_blue)
                 msg('<br>');
             else
                 msg(' | ');
         }
-        else if (item.blue == prev_blue)
+        else if (b == prev_blue)
         {
             msg(' ');
         }
 
         if (include)
         {
-            msg(item.blue);
-            msg(item.yellow);
-            msg(item.purple);
+            count += 1;
+            msg(b);
+            msg(y);
+            msg(p);
         }
         else
             msg('...');
         
-        prev_blue = item.blue;
-        prev_yellow = item.yellow;
+        prev_blue = b;
+        prev_yellow = y;
     }
+    msg("<br><br>count: " + count);
 }
 refresh();
 
