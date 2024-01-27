@@ -70,7 +70,15 @@ addFilters([ [ "blue is largest", "b > y && b > p" ],
              [ "yellow is largest", "y > b && y > p" ],
              [ "purple is largest", "p > b && p > y" ] ]);
 
-addFilters([ [ "blue < yellow", "b < y" ], [ "blue = yellow", "b == y" ], [ "blue > yellow", "b > y" ] ]);
+addFilters([ [ "yellow < 4", "y < 4" ],
+             [ "yellow == 4", "y == 4" ],
+             [ "yellow > 4", "y > 4" ] ]);
+
+addFilters([ [ "yellow + blue < 6", "(y + b) < 6" ],
+             [ "yellow + blue == 6", "(y + b) == 6" ],
+             [ "yellow + blue > 6", "(y + b) > 6" ] ]);
+
+             addFilters([ [ "blue < yellow", "b < y" ], [ "blue = yellow", "b == y" ], [ "blue > yellow", "b > y" ] ]);
 addFilters([ [ "yellow < purple", "y < p" ], [ "yellow = purple", "y == p" ], [ "yellow > purple", "y > p" ] ]);
 addFilters([ [ "blue < purple", "b < p" ], [ "blue = purple", "b == p" ], [ "blue > purple", "b > p" ] ]);
 
@@ -78,7 +86,10 @@ addFilters([ [ "ascending", "b < y && y < p" ],
              [ "descending", "b > y && y > p" ],
              [ "no order", "!(b < y && y < p) && !(b > y && y > p)" ] ]);
 
+addFilters([ [ "blue is even", "b % 2 == 0" ], [ "blue is odd", "b % 2 != 0" ] ]);
 addFilters([ [ "total is even", "(b + y + p) % 2 == 0" ], [ "total is odd", "(b + y + p) % 2 != 0" ] ]);
+
+addFilters([ [ "no pairs", "b != y && y != p" ], [ "one pair", "(b == y && y != p) || (y == p && p != b)" ] ]);
 
 addFilters([ [ "more evens", "((b % 2 + y % 2 + p % 2) < 2)" ], [ "more odds", "((b % 2 + y % 2 + p % 2) >= 2)" ] ]);
 
