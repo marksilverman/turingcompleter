@@ -10,7 +10,7 @@
         }
         table {
             table-layout: auto;
-            width: 60%;
+            width: 80%;
             border: 1px solid;
         }
         tr:nth-child(odd) { background-color: #c7cac6; }
@@ -21,16 +21,14 @@
 
 <body onload="main();">
     <p>
-        Turing Completer<br>
-        <div id="solution"></div><br>
-        <div id="tableContainer"></div>
-        <label for="compareTo">compare to: </label><input id="compareTo" type="number"><br>
+        Turing Completer
+        <br><div id="solution"></div>
+        <br><div id="tableContainer"></div>
         <br><input type="button" value="RESET" onClick="reset()"/>
         <br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
     </p>
 <script>
 
-var compareTo = document.getElementById("compareTo");
 var solutionElement = document.getElementById("solution");
 function show(info) { solutionElement.innerHTML += info; }
 function resetSolution() { solutionElement.innerHTML = ""; }
@@ -39,30 +37,34 @@ function addFilters(filters)
 {
     var count = 0;
     var row = document.createElement("tr");
-    for (const [desc, test] of filters)
+    
+    for (const [ desc, test ] of filters)
     {
         count += 1;
         var id = desc.replace(/ /g, '_');
-
         var checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
         checkbox.id = id;
-        checkbox.onchange = function(){ refresh() };
+        if (test == null)
+        {
+            checkbox.type = "number";
+        }
+        else
+        {
+            checkbox.type = "checkbox";
+            checkbox.onchange = function(){ refresh() };
+        }
 
         var label = document.createElement("label");
         label.htmlFor = id;
         label.textContent = desc;
-
         var cell = document.createElement("td");
-        cell.appendChild(checkbox);
         cell.appendChild(label);
-
+        cell.appendChild(checkbox);
         row.appendChild(cell);
-        filterList.push([ checkbox, test ]);
+        if (test) filterList.push([ checkbox, test ]);
     }
-    while (count < 3)
+    while (count < 4)
     {
-        // the table looks nicer if we always have three cells per row
         count += 1;
         row.appendChild(document.createElement("td"));
     }
@@ -73,6 +75,17 @@ function addFilters(filters)
 var filterList = [ ];
 var filterTable = document.createElement("table");
 document.getElementById("tableContainer").appendChild(filterTable);
+
+addFilters([ [ "blue < X1", "b < X1" ], [ "blue == X1", "b == X1" ], [ "blue > X1", "b > X1" ], [ "X1", null ] ]);
+addFilters([ [ "yellow < X2", "y < X2" ], [ "yellow == X2", "y == X2" ], [ "yellow > X2", "y > X2" ], [ "X2", null ] ]);
+addFilters([ [ "purple < X3", "p < X3" ], [ "purple == X3", "p == X3" ], [ "purple > X3", "p > X3" ], [ "X3", null ] ]);
+addFilters([ [ "yellow + blue < X4", "(y + b) < X4" ], [ "yellow + blue == X4", "(y + b) == X4" ], [ "yellow + blue > X4", "(y + b) > X4" ], [ "X4", null ] ]);
+addFilters([ [ "purple + blue < X5", "(p + b) < X5" ], [ "purple + blue == X5", "(p + b) == X5" ], [ "purple + blue > X5", "(p + b) > X5" ], [ "X5", null ] ]);
+addFilters([ [ "yellow + purple < X6", "(y + p) < X6" ], [ "yellow + purple == X6", "(y + p) == X6" ], [ "yellow + purple > X6", "(y + p) > X6" ], [ "X6", null ] ]);
+
+addFilters([ [ "no X7s", "b != X7 && y != X7 && p != X7" ],
+    [ "one X7", "((b == X7) + (y == X7) + (p == X7)) == 1" ],
+    [ "two X7s", "((b == X7) + (y == X7) + (p == X7)) == 2" ], [ "X7", null ] ]);
 
 addFilters([ [ "blue is smallest", "b < y && b < p" ],
              [ "yellow is smallest", "y < b && y < p" ],
@@ -104,26 +117,13 @@ addFilters([ [ "more evens", "((b % 2 + y % 2 + p % 2) < 2)" ], [ "more odds", "
 
 addFilters([ [ "no evens", "evenCount(b, y, p) == 0" ],
              [ "one even", "evenCount(b, y, p) == 1" ],
-             [ "two evens", "evenCount(b, y, p) == 2" ] ]);
-addFilters([ [ "three evens", "evenCount(b, y, p) == 3" ] ]);
+             [ "two evens", "evenCount(b, y, p) == 2" ],
+             [ "three evens", "evenCount(b, y, p) == 3" ] ]);
 
 addFilters([ [ "no odds", "oddCount(b, y, p) == 0" ],
              [ "one odd", "oddCount(b, y, p) == 1" ],
              [ "two odd", "oddCount(b, y, p) == 2" ] ]);
 
-addFilters([ [ "blue < X", "b < X" ], [ "blue == X", "b == X" ], [ "blue > X", "b > X" ] ]);
-addFilters([ [ "yellow < X", "y < X" ], [ "yellow == X", "y == X" ], [ "yellow > X", "y > X" ] ]);
-addFilters([ [ "purple < X", "p < X" ], [ "purple == X", "p == X" ], [ "purple > X", "p > X" ] ]);
-
-addFilters([ [ "yellow + blue < X", "(y + b) < X" ], [ "yellow + blue == X", "(y + b) == X" ], [ "yellow + blue > X", "(y + b) > X" ] ]);
-addFilters([ [ "purple + blue < X", "(p + b) < X" ], [ "purple + blue == X", "(p + b) == X" ], [ "purple + blue > X", "(p + b) > X" ] ]);
-addFilters([ [ "yellow + purple < X", "(y + p) < X" ], [ "yellow + purple == X", "(y + p) == X" ], [ "yellow + purple > X", "(y + p) > X" ] ]);
-
-addFilters([ [ "yellow + blue < 6", "(y + b) < 6" ], [ "yellow + blue == 6", "(y + b) == 6" ], [ "yellow + blue > 6", "(y + b) > 6" ] ]);
-
-addFilters([ [ "no Xs", "b != X && y != X && p != X" ],
-    [ "one X", "((b == X) + (y == X) + (p == X)) == 1" ],
-    [ "two Xs", "((b == X) + (y == X) + (p == X)) == 2" ] ]);
 
 var solution = [];
 for (let b = 1; b <= 5; b++)
@@ -144,7 +144,10 @@ for (let b = 1; b <= 5; b++)
 function reset()
 {
     for (const input of document.getElementsByTagName('input'))
+    {
         if (input.type == "checkbox") input.checked = false;
+        if (input.type == "number") input.value = '';
+    }
     refresh();
 }
 
@@ -168,7 +171,14 @@ function refresh()
     var prev_blue = -1;
     var prev_yellow = 1;
     var count = 0;
-    var X = compareTo.value;
+    var X1, X2, X3, X4, X5, X6, X7, X8, X9, X10;
+    for (const input of document.getElementsByTagName('input'))
+    {
+        if (input.value != '' && input.type == "number")
+             eval(input.id + "=" + input.value);
+    }
+
+
     for (const item of solution)
     {
         var include = true;
