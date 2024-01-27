@@ -3,16 +3,14 @@
 <head>
     <meta charset="utf-8">
     <style type="text/css">
-        body {
-            margin: 20px;
-        }
+        body { margin: 20px; }
         html, body, button {
             font-family: monospace;
             font-size: 20px;
         }
         table {
-            table-layout: fixed;
-            width: 80%;
+            table-layout: auto;
+            width: 60%;
             border: 1px solid;
         }
     </style>
@@ -22,78 +20,89 @@
 <body onload="main();">
     <p>
         Turing Completer<br>
-        <div id="msg"></div>
+        <div id="solution"></div>
         <div id="tableContainer"></div>
-        <br>
-        <input type="button" value="RESET" onClick="reset()"/>
-        <br><br>
-        <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+        <br><input type="button" value="RESET" onClick="reset()"/>
+        <br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
     </p>
 
 <script>
-   
-function msg(info) { document.getElementById("msg").innerHTML += info; }
-function reset_msg() { document.getElementById("msg").innerHTML = ""; }
 
-function createCheckbox(row, id, value)
-{
-    if (id == '') return null;
+var solutionElement = document.getElementById("solution");
+function add(info) { solutionElement.innerHTML += info; }
+function resetSolution() { solutionElement.innerHTML = ""; }
 
-    var checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.id = id;
-    checkbox.onchange = function(){ refresh() };
-
-    var label = document.createElement("label");
-    label.htmlFor = id;
-    label.textContent = value;
-
-    var cell = document.createElement("td");
-    cell.appendChild(checkbox);
-    cell.appendChild(label);
-    row.appendChild(cell);
-    return checkbox;
-}
-
-function createFilter(id1, value1, id2='', value2='', id3='', value3='')
+function addFilters(filters)
 {
     var row = document.createElement("tr");
-    var cb1 = createCheckbox(row, id1, value1);
-    var cb2 = createCheckbox(row, id2, value2);
-    var cb3 = createCheckbox(row, id3, value3);
+    for (const [desc, test] of filters)
+    {
+        var id = desc.replace(/ /g, '_');
+
+        var checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = id;
+        checkbox.onchange = function(){ refresh() };
+
+        var label = document.createElement("label");
+        label.htmlFor = id;
+        label.textContent = desc;
+
+        var cell = document.createElement("td");
+        cell.appendChild(checkbox);
+        cell.appendChild(label);
+
+        row.appendChild(cell);
+        filterList.push([ checkbox, test ]);
+    }
     filterTable.appendChild(row);
-    return [cb1, cb2, cb3];
 }
 
+var filterList = [ ];
 var filterTable = document.createElement("table");
 document.getElementById("tableContainer").appendChild(filterTable);
- 
-[bSmallest, ySmallest, pSmallest] = createFilter("bSmallest", "blue is smallest", "ySmallest", "yellow is smallest", "pSmallest", "purple is smallest");
-[bLargest, yLargest, pLargest] = createFilter("bLargest", "blue is largest", "yLargest", "yellow is largest", "pLargest", "purple is largest");
 
-[blueLT3, blueEQ3, blueGT3] = createFilter("blueLT3", "blue < 3", "blueEQ3", "blue == 3", "blueGT3", "blue > 3");
-[yellowLT3, yellowEQ3, yellowGT3] = createFilter("yellowLT3", "yellow < 3", "yellowEQ3", "yellow == 3", "yellowGT3", "yellow > 3");
-[purpleLT3, purpleEQ3, purpleGT3] = createFilter("purpleLT3", "purple < 3", "purpleEQ3", "purple == 3", "purpleGT3", "purple > 3");
+addFilters([ [ "blue is smallest", "b < y && b < p" ],
+             [ "yellow is smallest", "y < b && y < p" ],
+             [ "purple is smallest", "p < b && p < y" ] ]);
 
-[blueLT4, blueEQ4, blueGT4] = createFilter("blueLT4", "blue < 4", "blueEQ4", "blue == 4", "blueGT4", "blue > 4");
-[yellowLT4, yellowEQ4, yellowGT4] = createFilter("yellowLT4", "yellow < 4", "yellowEQ4", "yellow == 4", "yellowGT4", "yellow > 4");
-[purpleLT4, purpleEQ4, purpleGT4] = createFilter("purpleLT4", "purple < 4", "purpleEQ4", "purple == 4", "purpleGT4", "purple > 4");
+addFilters([ [ "blue is largest", "b > y && b > p" ],
+             [ "yellow is largest", "y > b && y > p" ],
+             [ "purple is largest", "p > b && p > y" ] ]);
 
-[byLT6, byEQ6, byGT6] = createFilter("byLT6", "blue + yellow < 6", "byEQ6", "blue + yellow == 6", "byGT6", "blue + yellow > 6");
+addFilters([ [ "blue < yellow", "b < y" ], [ "blue = yellow", "b == y" ], [ "blue > yellow", "b > y" ] ]);
+addFilters([ [ "yellow < purple", "y < p" ], [ "yellow = purple", "y == p" ], [ "yellow > purple", "y > p" ] ]);
+addFilters([ [ "blue < purple", "b < p" ], [ "blue = purple", "b == p" ], [ "blue > purple", "b > p" ] ]);
 
-[bLTy, bEQy, bGTy] = createFilter("bLTy", "blue < yellow",   "bEQy", "blue == yellow",   "bGTy", "blue > yellow");
-[yLTp, yEQp, yGTp] = createFilter("yLTp", "yellow < purple", "yEQp", "yellow == purple", "yGTp", "yellow > purple");
-[bLTp, bEQp, bGTp] = createFilter("bLTp", "blue < purple",   "bEQp", "blue == purple",   "bGTp", "blue > purple");
+addFilters([ [ "ascending", "b < y && y < p" ],
+             [ "descending", "b > y && y > p" ],
+             [ "no order", "!(b < y && y < p) && !(b > y && y > p)" ] ]);
 
-[zeroEvens, oneEven, twoEvens] = createFilter("zeroEvens", "no evens", "oneEven", "one even", "twoEvens", "two evens");
+addFilters([ [ "total is even", "(b + y + p) % 2 == 0" ], [ "total is odd", "(b + y + p) % 2 != 0" ] ]);
 
-[totalEven, totalOdd] = createFilter("totalEven", "total is even", "totalOdd", "total is odd");
-[moreEvens, moreOdds] = createFilter("moreEvens", "more evens", "moreOdds", "more odds");
-[ascending, descending] = createFilter("ascending", "ascending", "descending", "descending");
+addFilters([ [ "more evens", "((b % 2 + y % 2 + p % 2) < 2)" ], [ "more odds", "((b % 2 + y % 2 + p % 2) >= 2)" ] ]);
 
-[yellowEven, yellowOdd] = createFilter("yellowEven", "yellow is even", "yellowOdd", "yellow is odd");
-[blueEven, blueOdd] = createFilter("blueEven", "blue is even", "blueOdd", "blue is odd");
-[purpleEven, purpleOdd] = createFilter("purpleEven", "purple is even", "purpleOdd", "purple is odd");
+addFilters([ [ "no evens", "evenCount(b, y, p) == 0" ],
+             [ "one even", "evenCount(b, y, p) == 1" ],
+             [ "two evens", "evenCount(b, y, p) == 2" ] ]);
+
+addFilters([ [ "no odds", "oddCount(b, y, p) == 0" ],
+             [ "one odd", "oddCount(b, y, p) == 1" ],
+             [ "two odd", "oddCount(b, y, p) == 2" ] ]);
+
+// [blueLT3, blueEQ3, blueGT3] = createFilter("blueLT3", "blue < 3", "blueEQ3", "blue == 3", "blueGT3", "blue > 3");
+// [yellowLT3, yellowEQ3, yellowGT3] = createFilter("yellowLT3", "yellow < 3", "yellowEQ3", "yellow == 3", "yellowGT3", "yellow > 3");
+// [purpleLT3, purpleEQ3, purpleGT3] = createFilter("purpleLT3", "purple < 3", "purpleEQ3", "purple == 3", "purpleGT3", "purple > 3");
+
+// [blueLT4, blueEQ4, blueGT4] = createFilter("blueLT4", "blue < 4", "blueEQ4", "blue == 4", "blueGT4", "blue > 4");
+// [yellowLT4, yellowEQ4, yellowGT4] = createFilter("yellowLT4", "yellow < 4", "yellowEQ4", "yellow == 4", "yellowGT4", "yellow > 4");
+// [purpleLT4, purpleEQ4, purpleGT4] = createFilter("purpleLT4", "purple < 4", "purpleEQ4", "purple == 4", "purpleGT4", "purple > 4");
+
+// [byLT6, byEQ6, byGT6] = createFilter("byLT6", "blue + yellow < 6", "byEQ6", "blue + yellow == 6", "byGT6", "blue + yellow > 6");
+
+// [yellowEven, yellowOdd] = createFilter("yellowEven", "yellow is even", "yellowOdd", "yellow is odd");
+// [blueEven, blueOdd] = createFilter("blueEven", "blue is even", "blueOdd", "blue is odd");
+// [purpleEven, purpleOdd] = createFilter("purpleEven", "purple is even", "purpleOdd", "purple is odd");
 
 var solution = [];
 for (let b = 1; b <= 5; b++)
@@ -106,7 +115,6 @@ for (let b = 1; b <= 5; b++)
             tuple.blue = b;
             tuple.yellow = y;
             tuple.purple = p;
-            tuple.key = b.toString() + y.toString() + p.toString();
             solution.push(tuple);
         }
     }
@@ -115,9 +123,7 @@ for (let b = 1; b <= 5; b++)
 function reset()
 {
     for (const input of document.getElementsByTagName('input'))
-    {
         if (input.type == "checkbox") input.checked = false;
-    }
     refresh();
 }
 
@@ -137,7 +143,7 @@ function oddCount(b, y, p)
 
 function refresh()
 {
-    reset_msg();
+    resetSolution();
     var prev_blue = -1;
     var prev_yellow = 1;
     var count = 0;
@@ -147,103 +153,36 @@ function refresh()
         var b = item.blue;
         var y = item.yellow;
         var p = item.purple;
+
+        for (const [checkbox, test] of filterList)
+            if (checkbox.checked && !eval(test)) include = false;
         
-        if (bSmallest.checked && (b >= y || b >= p)) include = false;
-        if (ySmallest.checked && (y >= p || y >= b)) include = false;
-        if (pSmallest.checked && (p >= b || p >= y)) include = false;
-
-        if (bLargest.checked && (b <= y || b <= p)) include = false;
-        if (yLargest.checked && (y <= p || y <= b)) include = false;
-        if (pLargest.checked && (p <= b || p <= y)) include = false;
-
-        if (blueEQ3.checked && b != 3) include = false;
-        if (blueGT3.checked && b <= 3) include = false;
-        if (blueLT3.checked && b >= 3) include = false;
-        
-        if (yellowEQ3.checked && y != 3) include = false;
-        if (yellowGT3.checked && y <= 3) include = false;
-        if (yellowLT3.checked && y >= 3) include = false;
-
-        if (purpleEQ3.checked && p != 3) include = false;
-        if (purpleGT3.checked && p <= 3) include = false;
-        if (purpleLT3.checked && p >= 3) include = false;
-
-        if (blueEQ4.checked && b != 4) include = false;
-        if (blueGT4.checked && b <= 4) include = false;
-        if (blueLT4.checked && b >= 4) include = false;
-        
-        if (yellowEQ4.checked && y != 4) include = false;
-        if (yellowGT4.checked && y <= 4) include = false;
-        if (yellowLT4.checked && y >= 4) include = false;
-
-        if (purpleEQ4.checked && p != 4) include = false;
-        if (purpleGT4.checked && p <= 4) include = false;
-        if (purpleLT4.checked && p >= 4) include = false;
-        
-        if (byLT6.checked && ((b + y) >= 6)) include = false;
-        if (byEQ6.checked && ((b + y) != 6)) include = false;
-        if (byGT6.checked && ((b + y) <= 6)) include = false;
-
-        if (bLTp.checked && !(b < p)) include = false;
-        if (bEQp.checked && !(b == p)) include = false;
-        if (bGTp.checked && !(b > p)) include = false;
-        
-        if (bLTy.checked && !(b < y)) include = false;
-        if (bEQy.checked && !(b == y)) include = false;
-        if (bGTy.checked && !(b > y)) include = false;
-
-        if (yLTp.checked && !(y < p)) include = false;
-        if (yEQp.checked && !(y == p)) include = false;
-        if (yGTp.checked && !(y > p)) include = false;
-
-        if (blueEven.checked && (b % 2)) include = false;
-        if (blueOdd.checked && !(b % 2)) include = false;
-        
-        if (yellowEven.checked && (y % 2)) include = false;
-        if (yellowOdd.checked && !(y % 2)) include = false;
-        
-        if (purpleEven.checked && (p % 2)) include = false;
-        if (purpleOdd.checked && !(p % 2)) include = false;
-        
-        if (ascending.checked && (b >= y || y >= p)) include = false;
-        if (descending.checked && (b <= y || y <= p)) include = false;
-
-        if (moreEvens.checked && ((b % 2 + y % 2 + p % 2) >= 2)) include = false;
-        if (moreOdds.checked && ((b % 2 + y % 2 + p % 2) < 2)) include = false;
-
-        if (totalEven.checked && ((b + y + p) % 2)) include = false;
-        if (totalOdd.checked && !((b + y + p) % 2)) include = false;
-
-        if (zeroEvens.checked && evenCount(b, y, p) != 0) include = false;
-        if (oneEven.checked && evenCount(b, y, p) != 1) include = false;
-        if (twoEvens.checked && evenCount(b, y, p) != 2) include = false;
-
         if (y != prev_yellow)
         {
             if (b != prev_blue)
-                msg('<br>');
+                add('<br>');
             else
-                msg(' | ');
+                add(' | ');
         }
         else if (b == prev_blue)
         {
-            msg(' ');
+            add(' ');
         }
 
         if (include)
         {
             count += 1;
-            msg(b);
-            msg(y);
-            msg(p);
+            add(b);
+            add(y);
+            add(p);
         }
         else
-            msg('...');
+            add('...');
         
         prev_blue = b;
         prev_yellow = y;
     }
-    msg("<br><br>count: " + count);
+    add("<br><br>count: " + count);
 }
 refresh();
 
