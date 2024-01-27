@@ -81,7 +81,9 @@ document.getElementById("tableContainer").appendChild(filterTable);
 
 [byLT6, byEQ6, byGT6] = createFilter("byLT6", "blue + yellow < 6", "byEQ6", "blue + yellow == 6", "byGT6", "blue + yellow > 6");
 
-[bLTp, bEQp, bGTp] = createFilter("bLTp", "blue < purple", "bEQp", "blue == purple", "bGTp", "blue > purple");
+[bLTy, bEQy, bGTy] = createFilter("bLTy", "blue < yellow",   "bEQy", "blue == yellow",   "bGTy", "blue > yellow");
+[yLTp, yEQp, yGTp] = createFilter("yLTp", "yellow < purple", "yEQp", "yellow == purple", "yGTp", "yellow > purple");
+[bLTp, bEQp, bGTp] = createFilter("bLTp", "blue < purple",   "bEQp", "blue == purple",   "bGTp", "blue > purple");
 
 [zeroEvens, oneEven, twoEvens] = createFilter("zeroEvens", "no evens", "oneEven", "one even", "twoEvens", "two evens");
 
@@ -178,14 +180,22 @@ function refresh()
         if (purpleGT4.checked && p <= 4) include = false;
         if (purpleLT4.checked && p >= 4) include = false;
         
-        if (byLT6.checked && b + y >= 6) include = false;
-        if (byEQ6.checked && b + y != 6) include = false;
-        if (byGT6.checked && b + y <= 6) include = false;
+        if (byLT6.checked && ((b + y) >= 6)) include = false;
+        if (byEQ6.checked && ((b + y) != 6)) include = false;
+        if (byGT6.checked && ((b + y) <= 6)) include = false;
 
         if (bLTp.checked && !(b < p)) include = false;
         if (bEQp.checked && !(b == p)) include = false;
         if (bGTp.checked && !(b > p)) include = false;
         
+        if (bLTy.checked && !(b < y)) include = false;
+        if (bEQy.checked && !(b == y)) include = false;
+        if (bGTy.checked && !(b > y)) include = false;
+
+        if (yLTp.checked && !(y < p)) include = false;
+        if (yEQp.checked && !(y == p)) include = false;
+        if (yGTp.checked && !(y > p)) include = false;
+
         if (blueEven.checked && (b % 2)) include = false;
         if (blueOdd.checked && !(b % 2)) include = false;
         
@@ -201,7 +211,7 @@ function refresh()
         if (moreEvens.checked && ((b % 2 + y % 2 + p % 2) >= 2)) include = false;
         if (moreOdds.checked && ((b % 2 + y % 2 + p % 2) < 2)) include = false;
 
-        if (totalEven.checked && (b + y + p) % 2) include = false;
+        if (totalEven.checked && ((b + y + p) % 2)) include = false;
         if (totalOdd.checked && !((b + y + p) % 2)) include = false;
 
         if (zeroEvens.checked && evenCount(b, y, p) != 0) include = false;
