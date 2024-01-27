@@ -20,16 +20,18 @@
 <body onload="main();">
     <p>
         Turing Completer<br>
-        <div id="solution"></div>
+        <div id="solution"></div><br>
         <div id="tableContainer"></div>
+        <label for="compareTo">compare to: </label><input id="compareTo" type="number"><br>
         <br><input type="button" value="RESET" onClick="reset()"/>
         <br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
     </p>
 
 <script>
 
+var compareTo = document.getElementById("compareTo");
 var solutionElement = document.getElementById("solution");
-function add(info) { solutionElement.innerHTML += info; }
+function show(info) { solutionElement.innerHTML += info; }
 function resetSolution() { solutionElement.innerHTML = ""; }
 
 function addFilters(filters)
@@ -70,15 +72,7 @@ addFilters([ [ "blue is largest", "b > y && b > p" ],
              [ "yellow is largest", "y > b && y > p" ],
              [ "purple is largest", "p > b && p > y" ] ]);
 
-addFilters([ [ "yellow < 4", "y < 4" ],
-             [ "yellow == 4", "y == 4" ],
-             [ "yellow > 4", "y > 4" ] ]);
-
-addFilters([ [ "yellow + blue < 6", "(y + b) < 6" ],
-             [ "yellow + blue == 6", "(y + b) == 6" ],
-             [ "yellow + blue > 6", "(y + b) > 6" ] ]);
-
-             addFilters([ [ "blue < yellow", "b < y" ], [ "blue = yellow", "b == y" ], [ "blue > yellow", "b > y" ] ]);
+addFilters([ [ "blue < yellow", "b < y" ], [ "blue = yellow", "b == y" ], [ "blue > yellow", "b > y" ] ]);
 addFilters([ [ "yellow < purple", "y < p" ], [ "yellow = purple", "y == p" ], [ "yellow > purple", "y > p" ] ]);
 addFilters([ [ "blue < purple", "b < p" ], [ "blue = purple", "b == p" ], [ "blue > purple", "b > p" ] ]);
 
@@ -101,19 +95,13 @@ addFilters([ [ "no odds", "oddCount(b, y, p) == 0" ],
              [ "one odd", "oddCount(b, y, p) == 1" ],
              [ "two odd", "oddCount(b, y, p) == 2" ] ]);
 
-// [blueLT3, blueEQ3, blueGT3] = createFilter("blueLT3", "blue < 3", "blueEQ3", "blue == 3", "blueGT3", "blue > 3");
-// [yellowLT3, yellowEQ3, yellowGT3] = createFilter("yellowLT3", "yellow < 3", "yellowEQ3", "yellow == 3", "yellowGT3", "yellow > 3");
-// [purpleLT3, purpleEQ3, purpleGT3] = createFilter("purpleLT3", "purple < 3", "purpleEQ3", "purple == 3", "purpleGT3", "purple > 3");
+addFilters([ [ "blue < X", "b < X" ], [ "blue == X", "b == X" ], [ "blue > X", "b > X" ] ]);
+addFilters([ [ "yellow < X", "y < X" ], [ "yellow == X", "y == X" ], [ "yellow > X", "y > X" ] ]);
+addFilters([ [ "purple < X", "p < X" ], [ "purple == X", "p == X" ], [ "purple > X", "p > X" ] ]);
 
-// [blueLT4, blueEQ4, blueGT4] = createFilter("blueLT4", "blue < 4", "blueEQ4", "blue == 4", "blueGT4", "blue > 4");
-// [yellowLT4, yellowEQ4, yellowGT4] = createFilter("yellowLT4", "yellow < 4", "yellowEQ4", "yellow == 4", "yellowGT4", "yellow > 4");
-// [purpleLT4, purpleEQ4, purpleGT4] = createFilter("purpleLT4", "purple < 4", "purpleEQ4", "purple == 4", "purpleGT4", "purple > 4");
-
-// [byLT6, byEQ6, byGT6] = createFilter("byLT6", "blue + yellow < 6", "byEQ6", "blue + yellow == 6", "byGT6", "blue + yellow > 6");
-
-// [yellowEven, yellowOdd] = createFilter("yellowEven", "yellow is even", "yellowOdd", "yellow is odd");
-// [blueEven, blueOdd] = createFilter("blueEven", "blue is even", "blueOdd", "blue is odd");
-// [purpleEven, purpleOdd] = createFilter("purpleEven", "purple is even", "purpleOdd", "purple is odd");
+addFilters([ [ "yellow + blue < X", "(y + b) < X" ], [ "yellow + blue == X", "(y + b) == X" ], [ "yellow + blue > X", "(y + b) > X" ] ]);
+addFilters([ [ "purple + blue < X", "(p + b) < X" ], [ "purple + blue == X", "(p + b) == X" ], [ "purple + blue > X", "(p + b) > X" ] ]);
+addFilters([ [ "yellow + purple < X", "(y + p) < X" ], [ "yellow + purple == X", "(y + p) == X" ], [ "yellow + purple > X", "(y + p) > X" ] ]);
 
 var solution = [];
 for (let b = 1; b <= 5; b++)
@@ -158,6 +146,7 @@ function refresh()
     var prev_blue = -1;
     var prev_yellow = 1;
     var count = 0;
+    var X = compareTo.value;
     for (const item of solution)
     {
         var include = true;
@@ -171,29 +160,29 @@ function refresh()
         if (y != prev_yellow)
         {
             if (b != prev_blue)
-                add('<br>');
+                show('<br>');
             else
-                add(' | ');
+                show(' | ');
         }
         else if (b == prev_blue)
         {
-            add(' ');
+            show(' ');
         }
 
         if (include)
         {
             count += 1;
-            add(b);
-            add(y);
-            add(p);
+            show(b);
+            show(y);
+            show(p);
         }
         else
-            add('...');
+            show('...');
         
         prev_blue = b;
         prev_yellow = y;
     }
-    add("<br><br>count: " + count);
+    show("<br><br>count: " + count);
 }
 refresh();
 
