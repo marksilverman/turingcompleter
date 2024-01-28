@@ -230,7 +230,7 @@ function permute(allRows, rowIdx)
 {
     if (rowIdx == allRows.length)
     {
-        refresh(false);
+        specialRefresh();
         return;
     }
 
@@ -253,16 +253,50 @@ function permute(allRows, rowIdx)
                 if (prevCheckbox)
                     prevCheckbox.checked = false;
                 input.checked = true;
-                console.log(input.id);
-
                 permute(allRows, rowIdx + 1);
-
                 prevCheckbox = input;
             }
         }
     }
     else
         permute(allRows, rowIdx + 1);
+}
+
+function specialRefresh()
+{
+    var result = '<br>';
+    var count = 0;
+    var X1, X2, X3, X4, X5, X6, X7, X8, X9, X10;
+    for (const input of document.getElementsByTagName('input'))
+    {
+        if (input.value != '' && input.type == "number")
+             eval(input.id + "=" + input.value);
+    }
+
+    for (const item of solution)
+    {
+        var include = true;
+        var b = item.blue;
+        var y = item.yellow;
+        var p = item.purple;
+
+        // apply filters
+        for (const [checkbox, test] of filterList)
+        {
+            if (checkbox.checked && !eval(test))
+                include = false;
+        }
+        
+        if (include)
+        {
+            if (count > 1)
+                return;
+            result += b.toString() + y.toString() + p.toString() + " ";
+            count += 1;
+        }
+    }
+    if (count)
+        show(result + "<br>");
 }
 
 function refresh(reset = true)
