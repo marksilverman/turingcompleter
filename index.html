@@ -27,6 +27,7 @@
     </p>
 <script>
 
+filterCount = 0;
 var solutionElement = document.getElementById("solution");
 function show(info) { solutionElement.innerHTML += info; }
 function resetSolution() { solutionElement.innerHTML = ""; }
@@ -51,41 +52,37 @@ function toggleColor(button)
     }
 }
 
-function toggleRow(button)
+function toggleRow(checkbox)
 {
-    var row = button.parentNode.parentNode;
-    if (row.style.backgroundColor === "lightblue")
-    {
-        button.style.backgroundColor = "";
-        row.style.backgroundColor = "";
-    }
-    else
-    {
-        button.style.backgroundColor = "lightblue";
+    var row = checkbox.parentNode.parentNode;
+    if (checkbox.checked)
         row.style.backgroundColor = "lightblue";
-    }
+    else
+        row.style.backgroundColor = "";
 }
 
 function addFilters(filters)
 {
     var count = 0;
     var row = document.createElement("tr");
-    var button = document.createElement("button");
-    button.textContent = "C";
-    button.onclick = function() { toggleRow(this); };
+    row.id = "row" + filterCount;
+    filterCount += 1;
+    var checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.onchange = function() { toggleRow(this); };
     var cell = document.createElement("td");
-    cell.appendChild(button);
+    cell.appendChild(checkbox);
     row.appendChild(cell);
 
     for (const [ desc, test ] of filters)
     {
         count += 1;
         var id = desc.replace(/ /g, '_');
-        var checkbox = document.createElement("input");
+        checkbox = document.createElement("input");
         checkbox.id = id;
 
         var cell = document.createElement("td");
-        button = null;
+        var button = null;
 
         if (test == null)
         {
@@ -110,7 +107,7 @@ function addFilters(filters)
         cell.appendChild(label);
         cell.appendChild(checkbox);
         row.appendChild(cell);
-        if (test) filterList.push([ checkbox, test ]);
+        if (test) filterList.push([ checkbox, test, false ]);
     }
     while (count < 4)
     {
@@ -131,9 +128,9 @@ addFilters([ [ "purple < X3", "p < X3" ], [ "purple == X3", "p == X3" ], [ "purp
 addFilters([ [ "yellow + blue < X4", "(y + b) < X4" ], [ "yellow + blue == X4", "(y + b) == X4" ], [ "yellow + blue > X4", "(y + b) > X4" ], [ "X4", null ] ]);
 addFilters([ [ "purple + blue < X5", "(p + b) < X5" ], [ "purple + blue == X5", "(p + b) == X5" ], [ "purple + blue > X5", "(p + b) > X5" ], [ "X5", null ] ]);
 addFilters([ [ "yellow + purple < X6", "(y + p) < X6" ], [ "yellow + purple == X6", "(y + p) == X6" ], [ "yellow + purple > X6", "(y + p) > X6" ], [ "X6", null ] ]);
-addFilters([ [ "(blue + yellow + purple) < X7", "(b + y + p) < X7" ],
-    [ "(blue + yellow + purple) == X7", "(b + y + p) == X7" ],
-    [ "(blue + yellow + purple) > X7", "(b + y + p) > X7" ],
+addFilters([ [ "blue + yellow + purple < X7", "(b + y + p) < X7" ],
+    [ "blue + yellow + purple == X7", "(b + y + p) == X7" ],
+    [ "blue + yellow + purple > X7", "(b + y + p) > X7" ],
     [ "X7", null ] ]);
 
 addFilters([ [ "no X8s", "b != X8 && y != X8 && p != X8" ],
@@ -250,10 +247,18 @@ function refresh()
         var b = item.blue;
         var y = item.yellow;
         var p = item.purple;
+        var applied = 0;
 
         // apply filters
-        for (const [checkbox, test] of filterList)
-            if (checkbox.checked && !eval(test)) include = false;
+        for (const [checkbox, test, permute] of filterList)
+        {
+            if (checkbox.checked)
+            {
+                applied += 1;
+                if (!eval(test))
+                    include = false;
+            }
+        }
         
         if (y != prev_yellow)
         {
@@ -281,6 +286,7 @@ function refresh()
         prev_yellow = y;
     }
     show("<br><br>count: " + count);
+    show("<br><br>applied " + applied + " filters");
 }
 refresh();
 
