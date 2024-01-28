@@ -167,7 +167,7 @@ addFilters([ [ "purple is even", "p % 2 == 0" ], [ "purple is odd", "p % 2 != 0"
 
 addFilters([ [ "total is even", "(b + y + p) % 2 == 0" ], [ "total is odd", "(b + y + p) % 2 != 0" ] ]);
 
-addFilters([ [ "no pairs", "(b != y && y != p) || (b == y && y == p)" ],
+addFilters([ [ "no pairs", "(b != y && b != p && y != p) || (b == y && y == p)" ],
              [ "one pair", "(b == y && y != p) || (y == p && p != b) || (b == p && p != y)" ] ]);
 
 addFilters([ [ "triple number", "(b == y && y == p)" ],
@@ -289,7 +289,7 @@ function specialRefresh()
         
         if (include)
         {
-            if (count > 1)
+            if (count > 0)
                 return;
             result += b.toString() + y.toString() + p.toString() + " ";
             count += 1;
