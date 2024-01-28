@@ -13,8 +13,6 @@
             width: 80%;
             border: 1px solid;
         }
-        tr:nth-child(odd) { background-color: #c7cac6; }
-        tr:nth-child(even) { background-color: #ffffff; }
     </style>
     <title>Turing Completer</title>
 </head>
@@ -33,17 +31,36 @@ var solutionElement = document.getElementById("solution");
 function show(info) { solutionElement.innerHTML += info; }
 function resetSolution() { solutionElement.innerHTML = ""; }
 
+function toggleColor(button)
+{
+    cell = button.parentNode;
+    if (cell.style.backgroundColor === "lightgreen")
+        cell.style.backgroundColor = "lightblue";
+    else if (cell.style.backgroundColor === "lightblue")
+        cell.style.backgroundColor = "pink";
+    else if (cell.style.backgroundColor === "pink")
+        cell.style.backgroundColor = "";
+    else
+        cell.style.backgroundColor = "lightgreen";
+}
+
 function addFilters(filters)
 {
     var count = 0;
     var row = document.createElement("tr");
-    
+    var button;
+
     for (const [ desc, test ] of filters)
     {
         count += 1;
         var id = desc.replace(/ /g, '_');
         var checkbox = document.createElement("input");
         checkbox.id = id;
+
+        var cell = document.createElement("td");
+        cell.id = id + "-cell";
+        button = null;
+
         if (test == null)
         {
             checkbox.type = "number";
@@ -52,12 +69,18 @@ function addFilters(filters)
         {
             checkbox.type = "checkbox";
             checkbox.onchange = function(){ refresh() };
+
+            button = document.createElement("button");
+            button.textContent = "C";
+            button.onclick = function() { toggleColor(this); };
         }
 
         var label = document.createElement("label");
+        label.id = id + "-label";
         label.htmlFor = id;
-        label.textContent = desc;
-        var cell = document.createElement("td");
+        label.textContent = " " + desc;
+
+        if (button) cell.appendChild(button);
         cell.appendChild(label);
         cell.appendChild(checkbox);
         row.appendChild(cell);
@@ -143,6 +166,7 @@ for (let b = 1; b <= 5; b++)
         }
     }
 }
+
 
 function reset()
 {
