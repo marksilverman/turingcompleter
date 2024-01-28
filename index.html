@@ -33,22 +33,49 @@ function resetSolution() { solutionElement.innerHTML = ""; }
 
 function toggleColor(button)
 {
-    cell = button.parentNode;
+    var cell = button.parentNode;
     if (cell.style.backgroundColor === "lightgreen")
-        cell.style.backgroundColor = "lightblue";
-    else if (cell.style.backgroundColor === "lightblue")
+    {
+        button.style.backgroundColor = "pink";
         cell.style.backgroundColor = "pink";
+    }
     else if (cell.style.backgroundColor === "pink")
+    {
+        button.style.backgroundColor = "";
         cell.style.backgroundColor = "";
+    }
     else
+    {
+        button.style.backgroundColor = "lightgreen";
         cell.style.backgroundColor = "lightgreen";
+    }
+}
+
+function toggleRow(button)
+{
+    var row = button.parentNode.parentNode;
+    if (row.style.backgroundColor === "lightblue")
+    {
+        button.style.backgroundColor = "";
+        row.style.backgroundColor = "";
+    }
+    else
+    {
+        button.style.backgroundColor = "lightblue";
+        row.style.backgroundColor = "lightblue";
+    }
 }
 
 function addFilters(filters)
 {
     var count = 0;
     var row = document.createElement("tr");
-    var button;
+    var button = document.createElement("button");
+    button.textContent = "C";
+    button.onclick = function() { toggleRow(this); };
+    var cell = document.createElement("td");
+    cell.appendChild(button);
+    row.appendChild(cell);
 
     for (const [ desc, test ] of filters)
     {
@@ -58,7 +85,6 @@ function addFilters(filters)
         checkbox.id = id;
 
         var cell = document.createElement("td");
-        cell.id = id + "-cell";
         button = null;
 
         if (test == null)
@@ -105,10 +131,14 @@ addFilters([ [ "purple < X3", "p < X3" ], [ "purple == X3", "p == X3" ], [ "purp
 addFilters([ [ "yellow + blue < X4", "(y + b) < X4" ], [ "yellow + blue == X4", "(y + b) == X4" ], [ "yellow + blue > X4", "(y + b) > X4" ], [ "X4", null ] ]);
 addFilters([ [ "purple + blue < X5", "(p + b) < X5" ], [ "purple + blue == X5", "(p + b) == X5" ], [ "purple + blue > X5", "(p + b) > X5" ], [ "X5", null ] ]);
 addFilters([ [ "yellow + purple < X6", "(y + p) < X6" ], [ "yellow + purple == X6", "(y + p) == X6" ], [ "yellow + purple > X6", "(y + p) > X6" ], [ "X6", null ] ]);
+addFilters([ [ "(blue + yellow + purple) < X7", "(b + y + p) < X7" ],
+    [ "(blue + yellow + purple) == X7", "(b + y + p) == X7" ],
+    [ "(blue + yellow + purple) > X7", "(b + y + p) > X7" ],
+    [ "X7", null ] ]);
 
-addFilters([ [ "no X7s", "b != X7 && y != X7 && p != X7" ],
-             [ "one X7", "((b == X7) + (y == X7) + (p == X7)) == 1" ],
-             [ "two X7s", "((b == X7) + (y == X7) + (p == X7)) == 2" ], [ "X7", null ] ]);
+addFilters([ [ "no X8s", "b != X8 && y != X8 && p != X8" ],
+             [ "one X8", "((b == X8) + (y == X8) + (p == X8)) == 1" ],
+             [ "two X8s", "((b == X8) + (y == X8) + (p == X8)) == 2" ], [ "X8", null ] ]);
 
 addFilters([ [ "blue is smallest", "b < y && b < p" ],
              [ "yellow is smallest", "y < b && y < p" ],
@@ -126,6 +156,14 @@ addFilters([ [ "ascending", "b < y && y < p" ],
              [ "descending", "b > y && y > p" ],
              [ "no order", "!(b < y && y < p) && !(b > y && y > p)" ] ]);
 
+addFilters([ [ "no asc", "(b + 1) != y && (y + 1) != p" ],
+             [ "two asc", "((b + 1) == y && (y + 1) != p) || ((b + 1) != y && (y + 1) == p)" ],
+             [ "three asc", "(b + 1) == y && (y + 1) == p" ] ]);
+
+addFilters([ [ "no desc", "(b - 1) != y && (y - 1) != p" ],
+             [ "two desc", "((b - 1) == y && (y - 1) != p) || ((b - 1) != y && (y - 1) == p)" ],
+             [ "three desc", "(b - 1) == y && (y - 1) == p" ] ]);
+
 addFilters([ [ "blue is even", "b % 2 == 0" ], [ "blue is odd", "b % 2 != 0" ] ]);
 addFilters([ [ "yellow is even", "y % 2 == 0" ], [ "yellow is odd", "y % 2 != 0" ] ]);
 addFilters([ [ "purple is even", "p % 2 == 0" ], [ "purple is odd", "p % 2 != 0" ] ]);
@@ -136,8 +174,8 @@ addFilters([ [ "no pairs", "(b != y && y != p) || (b == y && y == p)" ],
              [ "one pair", "(b == y && y != p) || (y == p && p != b) || (b == p && p != y)" ] ]);
 
 addFilters([ [ "triple number", "(b == y && y == p)" ],
-             [ "double number", "(b == y && y != p) || (y == p && p != b)" ],
-             [ "no repetition", "(b != y && y != p)" ] ]);
+             [ "double number", "(b == y && b != p) || (y == p && y != b) || (b == p && b != y)" ],
+             [ "no repetition", "(b != y && y != p && b != p)" ] ]);
 
 addFilters([ [ "more evens", "((b % 2 + y % 2 + p % 2) < 2)" ], [ "more odds", "((b % 2 + y % 2 + p % 2) >= 2)" ] ]);
 
