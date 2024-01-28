@@ -28,6 +28,8 @@
     </p>
 <script>
 
+// interesting note: if the total is <= 6, there can't be a triple number
+
 filterCount = 0;
 var solutionElement = document.getElementById("solution");
 function show(info) { solutionElement.innerHTML += info; }
@@ -145,6 +147,8 @@ addFilters([ [ "no JJ", "b != JJ && y != JJ && p != JJ" ],
              [ "one JJ", "((b == JJ) + (y == JJ) + (p == JJ)) == 1" ],
              [ "two JJ", "((b == JJ) + (y == JJ) + (p == JJ)) == 2" ], [ "JJ", null ] ]);
 
+addFilters([ [ "blue < KK", "b < KK" ], [ "yellow < KK", "y < KK" ], [ "purple < KK", "p < KK" ], [ "KK", null ] ]);
+
 addFilters([ [ "blue is smallest", "b < y && b < p" ],
              [ "yellow is smallest", "y < b && y < p" ],
              [ "purple is smallest", "p < b && p < y" ] ]);
@@ -178,6 +182,9 @@ addFilters([ [ "yellow is even", "y % 2 == 0" ], [ "yellow is odd", "y % 2 != 0"
 addFilters([ [ "purple is even", "p % 2 == 0" ], [ "purple is odd", "p % 2 != 0" ] ]);
 
 addFilters([ [ "total is even", "(b + y + p) % 2 == 0" ], [ "total is odd", "(b + y + p) % 2 != 0" ] ]);
+addFilters([ [ "total mult 3", "(b + y + p) % 3 == 0" ],
+             [ "total mult 4", "(b + y + p) % 4 == 0" ],
+             [ "total mult 5", "(b + y + p) % 5 == 0" ] ]);
 
 addFilters([ [ "no pairs", "(b != y && b != p && y != p) || (b == y && y == p)" ],
              [ "one pair", "(b == y && y != p) || (y == p && p != b) || (b == p && p != y)" ] ]);
@@ -274,11 +281,12 @@ function permute(allRows, rowIdx)
         permute(allRows, rowIdx + 1);
 }
 
+// this version applies all the filters and reports unique solutions
 function specialRefresh()
 {
     var result = '';
     var count = 0;
-    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ;
+    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ, KK;
     for (const input of document.getElementsByTagName('input'))
     {
         if (input.value != '' && input.type == "number")
@@ -311,6 +319,7 @@ function specialRefresh()
         show(result + "<br>");
 }
 
+// this version applies all the filters and shows the current solution set
 function refresh(reset = true)
 {
     if (reset) solutionElement.innerHTML = "";
@@ -318,7 +327,7 @@ function refresh(reset = true)
     var prev_blue = -1;
     var prev_yellow = 1;
     var count = 0;
-    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ;
+    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ, KK;
     for (const input of document.getElementsByTagName('input'))
     {
         if (input.value != '' && input.type == "number")
