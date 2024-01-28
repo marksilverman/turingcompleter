@@ -21,8 +21,9 @@
     <p>
         Turing Completer
         <br><div id="solution"></div>
-        <br><div id="tableContainer"></div>
         <br><input type="button" value="RESET" onClick="reset()"/>
+        <br><input type="button" value="PERMUTE" onClick="permute(filterTable.getElementsByTagName('tr'), 0)"/>
+        <br><div id="tableContainer"></div>
         <br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
     </p>
 <script>
@@ -30,7 +31,6 @@
 filterCount = 0;
 var solutionElement = document.getElementById("solution");
 function show(info) { solutionElement.innerHTML += info; }
-function resetSolution() { solutionElement.innerHTML = ""; }
 
 function toggleColor(button)
 {
@@ -107,7 +107,7 @@ function addFilters(filters)
         cell.appendChild(label);
         cell.appendChild(checkbox);
         row.appendChild(cell);
-        if (test) filterList.push([ checkbox, test, false ]);
+        if (test) filterList.push([ checkbox, test ]);
     }
     while (count < 4)
     {
@@ -202,7 +202,6 @@ for (let b = 1; b <= 5; b++)
     }
 }
 
-
 function reset()
 {
     for (const input of document.getElementsByTagName('input'))
@@ -227,9 +226,49 @@ function oddCount(b, y, p)
     return 3 - evenCount(b, y, p);
 }
 
-function refresh()
+function permute(allRows, rowIdx)
 {
-    resetSolution();
+    if (rowIdx == allRows.length)
+    {
+        refresh(false);
+        return;
+    }
+
+    var prevCheckbox = null;
+    var row = allRows[rowIdx];
+    var allInputs = row.getElementsByTagName("input");
+    if (allInputs[0].checked)
+    {
+        for (let i = 1; i < allInputs.length; i++)
+        {
+            var input = allInputs[i];
+            if (input.type == "checkbox")
+                input.checked = false;
+        }
+        for (let i = 1; i < allInputs.length; i++)
+        {
+            var input = allInputs[i];
+            if (input.type == "checkbox")
+            {
+                if (prevCheckbox)
+                    prevCheckbox.checked = false;
+                input.checked = true;
+                console.log(input.id);
+
+                permute(allRows, rowIdx + 1);
+
+                prevCheckbox = input;
+            }
+        }
+    }
+    else
+        permute(allRows, rowIdx + 1);
+}
+
+function refresh(reset = true)
+{
+    if (reset) solutionElement.innerHTML = "";
+
     var prev_blue = -1;
     var prev_yellow = 1;
     var count = 0;
@@ -240,7 +279,6 @@ function refresh()
              eval(input.id + "=" + input.value);
     }
 
-
     for (const item of solution)
     {
         var include = true;
@@ -250,7 +288,7 @@ function refresh()
         var applied = 0;
 
         // apply filters
-        for (const [checkbox, test, permute] of filterList)
+        for (const [checkbox, test] of filterList)
         {
             if (checkbox.checked)
             {
@@ -286,7 +324,7 @@ function refresh()
         prev_yellow = y;
     }
     show("<br><br>count: " + count);
-    show("<br><br>applied " + applied + " filters");
+    show("<br><br>applied " + applied + " filters<br>");
 }
 refresh();
 
