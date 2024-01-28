@@ -122,20 +122,28 @@ var filterList = [ ];
 var filterTable = document.createElement("table");
 document.getElementById("tableContainer").appendChild(filterTable);
 
-addFilters([ [ "blue < X1", "b < X1" ], [ "blue == X1", "b == X1" ], [ "blue > X1", "b > X1" ], [ "X1", null ] ]);
-addFilters([ [ "yellow < X2", "y < X2" ], [ "yellow == X2", "y == X2" ], [ "yellow > X2", "y > X2" ], [ "X2", null ] ]);
-addFilters([ [ "purple < X3", "p < X3" ], [ "purple == X3", "p == X3" ], [ "purple > X3", "p > X3" ], [ "X3", null ] ]);
-addFilters([ [ "yellow + blue < X4", "(y + b) < X4" ], [ "yellow + blue == X4", "(y + b) == X4" ], [ "yellow + blue > X4", "(y + b) > X4" ], [ "X4", null ] ]);
-addFilters([ [ "purple + blue < X5", "(p + b) < X5" ], [ "purple + blue == X5", "(p + b) == X5" ], [ "purple + blue > X5", "(p + b) > X5" ], [ "X5", null ] ]);
-addFilters([ [ "yellow + purple < X6", "(y + p) < X6" ], [ "yellow + purple == X6", "(y + p) == X6" ], [ "yellow + purple > X6", "(y + p) > X6" ], [ "X6", null ] ]);
-addFilters([ [ "blue + yellow + purple < X7", "(b + y + p) < X7" ],
-    [ "blue + yellow + purple == X7", "(b + y + p) == X7" ],
-    [ "blue + yellow + purple > X7", "(b + y + p) > X7" ],
-    [ "X7", null ] ]);
+addFilters([ [ "blue < AA", "b < AA" ], [ "blue == AA", "b == AA" ], [ "blue > AA", "b > AA" ], [ "AA", null ] ]);
+addFilters([ [ "yellow < BB", "y < BB" ], [ "yellow == BB", "y == BB" ], [ "yellow > BB", "y > BB" ], [ "BB", null ] ]);
+addFilters([ [ "purple < CC", "p < CC" ], [ "purple == CC", "p == CC" ], [ "purple > CC", "p > CC" ], [ "CC", null ] ]);
+addFilters([ [ "yellow + blue < DD", "(y + b) < DD" ], [ "yellow + blue == DD", "(y + b) == DD" ], [ "yellow + blue > DD", "(y + b) > DD" ], [ "DD", null ] ]);
+addFilters([ [ "purple + blue < EE", "(p + b) < EE" ], [ "purple + blue == EE", "(p + b) == EE" ], [ "purple + blue > EE", "(p + b) > EE" ], [ "EE", null ] ]);
+addFilters([ [ "yellow + purple < FF", "(y + p) < FF" ], [ "yellow + purple == FF", "(y + p) == FF" ], [ "yellow + purple > FF", "(y + p) > FF" ], [ "FF", null ] ]);
+addFilters([ [ "blue + yellow + purple < GG", "(b + y + p) < GG" ],
+    [ "blue + yellow + purple == GG", "(b + y + p) == GG" ],
+    [ "blue + yellow + purple > GG", "(b + y + p) > GG" ],
+    [ "GG", null ] ]);
 
-addFilters([ [ "no X8s", "b != X8 && y != X8 && p != X8" ],
-             [ "one X8", "((b == X8) + (y == X8) + (p == X8)) == 1" ],
-             [ "two X8s", "((b == X8) + (y == X8) + (p == X8)) == 2" ], [ "X8", null ] ]);
+addFilters([ [ "no HH", "b != HH && y != HH && p != HH" ],
+             [ "one HH", "((b == HH) + (y == HH) + (p == HH)) == 1" ],
+             [ "two HH", "((b == HH) + (y == HH) + (p == HH)) == 2" ], [ "HH", null ] ]);
+
+addFilters([ [ "no II", "b != II && y != II && p != II" ],
+             [ "one II", "((b == II) + (y == II) + (p == II)) == 1" ],
+             [ "two II", "((b == II) + (y == II) + (p == II)) == 2" ], [ "II", null ] ]);
+
+addFilters([ [ "no JJ", "b != JJ && y != JJ && p != JJ" ],
+             [ "one JJ", "((b == JJ) + (y == JJ) + (p == JJ)) == 1" ],
+             [ "two JJ", "((b == JJ) + (y == JJ) + (p == JJ)) == 2" ], [ "JJ", null ] ]);
 
 addFilters([ [ "blue is smallest", "b < y && b < p" ],
              [ "yellow is smallest", "y < b && y < p" ],
@@ -144,6 +152,10 @@ addFilters([ [ "blue is smallest", "b < y && b < p" ],
 addFilters([ [ "blue is largest", "b > y && b > p" ],
              [ "yellow is largest", "y > b && y > p" ],
              [ "purple is largest", "p > b && p > y" ] ]);
+
+addFilters([ [ "blue largest or tied", "(b > y && b >= p) || (b >= y && b > p)" ],
+             [ "yellow largest or tied", "(y > b && y >= p) || (y >= b && y > p)" ],
+             [ "purple largest or tied", "(p > b && p >= y) || (p >= b && p > y)" ] ]);
 
 addFilters([ [ "blue < yellow", "b < y" ], [ "blue = yellow", "b == y" ], [ "blue > yellow", "b > y" ] ]);
 addFilters([ [ "yellow < purple", "y < p" ], [ "yellow = purple", "y == p" ], [ "yellow > purple", "y > p" ] ]);
@@ -264,9 +276,9 @@ function permute(allRows, rowIdx)
 
 function specialRefresh()
 {
-    var result = '<br>';
+    var result = '';
     var count = 0;
-    var X1, X2, X3, X4, X5, X6, X7, X8, X9, X10;
+    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ;
     for (const input of document.getElementsByTagName('input'))
     {
         if (input.value != '' && input.type == "number")
@@ -306,7 +318,7 @@ function refresh(reset = true)
     var prev_blue = -1;
     var prev_yellow = 1;
     var count = 0;
-    var X1, X2, X3, X4, X5, X6, X7, X8, X9, X10;
+    var AA, BB, CC, DD, EE, FF, GG, HH, X9, X10;
     for (const input of document.getElementsByTagName('input'))
     {
         if (input.value != '' && input.type == "number")
