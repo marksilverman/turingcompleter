@@ -34,32 +34,17 @@ filterCount = 0;
 var solutionElement = document.getElementById("solution");
 function show(info) { solutionElement.innerHTML += info; }
 
-function toggleColor(button)
-{
-    var cell = button.parentNode;
-    if (cell.style.backgroundColor === "lightgreen")
-    {
-        button.style.backgroundColor = "pink";
-        cell.style.backgroundColor = "pink";
-    }
-    else if (cell.style.backgroundColor === "pink")
-    {
-        button.style.backgroundColor = "";
-        cell.style.backgroundColor = "";
-    }
-    else
-    {
-        button.style.backgroundColor = "lightgreen";
-        cell.style.backgroundColor = "lightgreen";
-    }
-}
+var activated = "lightblue";
+var locked = "lightgreen";
 
-function toggleRow(checkbox)
+function toggleEnabled(checkbox)
 {
     var row = checkbox.parentNode.parentNode;
-    if (checkbox.checked)
-        row.style.backgroundColor = "lightblue";
-    else
+    if (row.style.backgroundColor == "")
+        row.style.backgroundColor = activated;
+    else if (row.style.backgroundColor == activated)
+        row.style.backgroundColor = locked;
+    else if (row.style.backgroundColor == locked)
         row.style.backgroundColor = "";
 }
 
@@ -69,22 +54,24 @@ function addFilters(filters)
     var row = document.createElement("tr");
     row.id = "row" + filterCount;
     filterCount += 1;
-    var checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.onchange = function() { toggleRow(this); };
+
+    var rowStateButton = document.createElement("button");
+    rowStateButton.onclick = function() { toggleEnabled(this); };
+    rowStateButton.style.width = "20px";
+    rowStateButton.style.height = "20px";
+    rowStateButton.style.backgroundColor = "orange";
     var cell = document.createElement("td");
-    cell.appendChild(checkbox);
+    cell.appendChild(rowStateButton);
     row.appendChild(cell);
 
     for (const [ desc, test ] of filters)
     {
         count += 1;
         var id = desc.replace(/ /g, '_');
-        checkbox = document.createElement("input");
+        var checkbox = document.createElement("input");
         checkbox.id = id;
 
         var cell = document.createElement("td");
-        var button = null;
 
         if (test == null)
         {
@@ -94,10 +81,6 @@ function addFilters(filters)
         {
             checkbox.type = "checkbox";
             checkbox.onchange = function(){ refresh() };
-
-            button = document.createElement("button");
-            button.textContent = "C";
-            button.onclick = function() { toggleColor(this); };
         }
 
         var label = document.createElement("label");
@@ -105,7 +88,6 @@ function addFilters(filters)
         label.htmlFor = id;
         label.textContent = " " + desc;
 
-        if (button) cell.appendChild(button);
         cell.appendChild(label);
         cell.appendChild(checkbox);
         row.appendChild(cell);
@@ -256,17 +238,21 @@ function permute(allRows, rowIdx)
     var prevCheckbox = null;
     var row = allRows[rowIdx];
     var allInputs = row.getElementsByTagName("input");
-    for (let i = 1; i < allInputs.length; i++)
+
+    if (row.style.backgroundColor != locked)
     {
-        var input = allInputs[i];
-        if (input.type == "checkbox")
-            input.checked = false;
-    }
-    if (allInputs[0].checked)
-    {
-        for (let i = 1; i < allInputs.length; i++)
+        // uncheck any unlocked checkboxes
+        for (var input of allInputs)
         {
-            var input = allInputs[i];
+            if (input.type == "checkbox")
+                input.checked = false;
+        }
+    }
+
+    if (row.style.backgroundColor == activated)
+    {
+        for (var input of allInputs)
+        {
             if (input.type == "checkbox")
             {
                 if (prevCheckbox)
