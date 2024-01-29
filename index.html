@@ -21,8 +21,9 @@
     <p>
         Turing Completer
         <br><div id="solution"></div>
-        <br><input type="button" value="RESET" onClick="reset()"/>
-        <br><input type="button" value="PERMUTE" onClick="permute(filterTable.getElementsByTagName('tr'), 0)"/>
+        <br><input type="button" value="UNCHECK" onClick="uncheck()"/>
+        <br><input type="button" value="PERMUTE (UNIQUES)" onClick="permute(true)"/>
+        <br><input type="button" value="PERMUTE (ALL)" onClick="permute(false)"/>
         <br><div id="tableContainer"></div>
         <br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
     </p>
@@ -186,7 +187,6 @@ addFilters([ [ "no odds", "oddCount(b, y, p) == 0" ],
              [ "one odd", "oddCount(b, y, p) == 1" ],
              [ "two odd", "oddCount(b, y, p) == 2" ] ]);
 
-
 var solution = [];
 for (let b = 1; b <= 5; b++)
 {
@@ -203,13 +203,10 @@ for (let b = 1; b <= 5; b++)
     }
 }
 
-function reset()
+function uncheck()
 {
-    for (const input of document.getElementsByTagName('input'))
-    {
-        if (input.type == "checkbox") input.checked = false;
-        if (input.type == "number") input.value = '';
-    }
+    for (var input of document.querySelectorAll('input[type="checkbox"]'))
+        input.checked = false;
     refresh();
 }
 
@@ -227,44 +224,47 @@ function oddCount(b, y, p)
     return 3 - evenCount(b, y, p);
 }
 
-function permute(allRows, rowIdx)
+// runs through every permutation of the activated rows
+function permute(unique)
 {
-    if (rowIdx == allRows.length)
+    var row_list = filterTable.getElementsByTagName('tr');
+    var activateTheNextCheckbox = false;
+    for (var rowIdx = row_list.length - 1; rowIdx >= 0; rowIdx -= 1)
     {
-        specialRefresh();
-        return;
-    }
+        var row = row_list[rowIdx];
+        var checkbox_list = row.querySelectorAll('input[type="checkbox"]');
 
-    var prevCheckbox = null;
-    var row = allRows[rowIdx];
-    var allInputs = row.getElementsByTagName("input");
+        if (row.style.backgroundColor != activated) continue;
 
-    if (row.style.backgroundColor != locked)
-    {
-        // uncheck any unlocked checkboxes
-        for (var input of allInputs)
+        for (var checkbox of checkbox_list)
         {
-            if (input.type == "checkbox")
-                input.checked = false;
-        }
-    }
-
-    if (row.style.backgroundColor == activated)
-    {
-        for (var input of allInputs)
-        {
-            if (input.type == "checkbox")
+            if (checkbox.checked)
             {
-                if (prevCheckbox)
-                    prevCheckbox.checked = false;
-                input.checked = true;
-                permute(allRows, rowIdx + 1);
-                prevCheckbox = input;
+                checkbox.checked = false;
+                activateTheNextCheckbox = true;
+            }
+            else if (activateTheNextCheckbox)
+            {
+                checkbox.checked = true;
+                activateTheNextCheckbox = false;
+                break;
             }
         }
+        if (activateTheNextCheckbox)
+        {
+            // we ran out of checkboxes; reset this row and update the one above it
+            checkbox_list[0].checked = true;
+            checkbox_list[checkbox_list.length - 1].checked = false;
+            activateTheNextCheckbox = false;
+        }
+        else
+        {
+            // we moved one checkmark so we are done and ready for refresh
+            break;
+        }
     }
-    else
-        permute(allRows, rowIdx + 1);
+    if (refresh() != 1 && unique)
+        permute(true);
 }
 
 // this version applies all the filters and reports unique solutions
@@ -366,6 +366,7 @@ function refresh(reset = true)
     }
     show("<br><br>count: " + count);
     show("<br><br>applied " + applied + " filters<br>");
+    return count;
 }
 refresh();
 
