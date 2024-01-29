@@ -187,6 +187,7 @@ addFilters([ [ "no odds", "oddCount(b, y, p) == 0" ],
              [ "one odd", "oddCount(b, y, p) == 1" ],
              [ "two odd", "oddCount(b, y, p) == 2" ] ]);
 
+unique_solutions = [];
 var solution = [];
 for (let b = 1; b <= 5; b++)
 {
@@ -263,8 +264,48 @@ function permute(unique)
             break;
         }
     }
-    if (refresh() != 1 && unique)
-        permute(true);
+
+    var new_solutions = refresh();
+    if (!unique)
+        return;
+
+    // we only want unique solutions
+    if (new_solutions.length != 1)
+    {
+        // this solution was not unique
+        return permute(true);
+    }
+
+    // this solution was unique
+    // but we need to make sure all the verifiers were meaningful
+    for (var row of row_list)
+    {
+        if (row.style.backgroundColor != activated) continue;
+        for (var checkbox of row.querySelectorAll('input[type="checkbox"]'))
+        {
+            if (!checkbox.checked) continue;
+
+            // uncheck the box and see if the count has changed
+            checkbox.checked = false;
+            var more_solutions = refresh();
+            checkbox.checked = true;
+            if (more_solutions.length == 1)
+            {
+                // there's still only one solution
+                // so this verifier was useless
+                // keep searching
+                return permute(true);
+            }
+            // there's more than one solution
+            // this particular verifier was meaningful
+            // so we check all the others
+            break;
+        }
+    }
+    // if we make it here, we found a unique and valid possible solution
+    if (!unique_solutions.includes(new_solutions[0]))
+        unique_solutions.push(new_solutions[0])
+    refresh();
 }
 
 // this version applies all the filters and reports unique solutions
@@ -310,6 +351,7 @@ function refresh(reset = true)
 {
     if (reset) solutionElement.innerHTML = "";
 
+    var solutions = [ ];
     var prev_blue = -1;
     var prev_yellow = 1;
     var count = 0;
@@ -357,6 +399,7 @@ function refresh(reset = true)
             show(b);
             show(y);
             show(p);
+            solutions.push(b.toString() + y.toString() + p.toString());
         }
         else
             show('...');
@@ -366,7 +409,13 @@ function refresh(reset = true)
     }
     show("<br><br>count: " + count);
     show("<br><br>applied " + applied + " filters<br>");
-    return count;
+    if (unique_solutions.length)
+    {
+        show("<br>unique solutions:");
+        for (const s of unique_solutions)
+            show(" " + s);
+    }
+    return solutions;
 }
 refresh();
 
