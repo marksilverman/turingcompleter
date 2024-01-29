@@ -10,7 +10,6 @@
         }
         table {
             table-layout: auto;
-            width: 80%;
             border: 1px solid;
         }
     </style>
@@ -20,10 +19,11 @@
 <body onload="main();">
     <p>
         Turing Completer
-        <br><div id="solution"></div>
         <br><input type="button" value="UNCHECK" onClick="uncheck()"/>
-        <br><input type="button" value="PERMUTE (UNIQUES)" onClick="permute(true)"/>
-        <br><input type="button" value="PERMUTE (ALL)" onClick="permute(false)"/>
+        <input type="button" value="PERMUTE (UNIQUES)" onClick="permute(true)"/>
+        <input type="button" value="PERMUTE (ALL)" onClick="permute(false)"/>
+        <input type="button" value="CLEAR SOLUTIONS" onClick="clearUniqueSolutions()"/>
+        <br><div id="solution"></div>
         <br><div id="tableContainer"></div>
         <br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
     </p>
@@ -131,6 +131,8 @@ addFilters([ [ "no JJ", "b != JJ && y != JJ && p != JJ" ],
              [ "two JJ", "((b == JJ) + (y == JJ) + (p == JJ)) == 2" ], [ "JJ", null ] ]);
 
 addFilters([ [ "blue < KK", "b < KK" ], [ "yellow < KK", "y < KK" ], [ "purple < KK", "p < KK" ], [ "KK", null ] ]);
+addFilters([ [ "blue = LL", "b == LL" ], [ "yellow = LL", "y == LL" ], [ "purple = LL", "p == LL" ], [ "LL", null ] ]);
+addFilters([ [ "blue > MM", "b > MM" ], [ "yeMMow > MM", "y > MM" ], [ "purple > MM", "p > MM" ], [ "MM", null ] ]);
 
 addFilters([ [ "blue is smallest", "b < y && b < p" ],
              [ "yellow is smallest", "y < b && y < p" ],
@@ -152,13 +154,33 @@ addFilters([ [ "ascending", "b < y && y < p" ],
              [ "descending", "b > y && y > p" ],
              [ "no order", "!(b < y && y < p) && !(b > y && y > p)" ] ]);
 
-addFilters([ [ "no asc", "(b + 1) != y && (y + 1) != p" ],
-             [ "two asc", "((b + 1) == y && (y + 1) != p) || ((b + 1) != y && (y + 1) == p)" ],
-             [ "three asc", "(b + 1) == y && (y + 1) == p" ] ]);
+function descending(b, y, p)
+{
+    var count = 1;
+    if ((b - 1) == y) count += 1;
+    if ((y - 1) == p) count += 1;
+    return count;
+}
 
-addFilters([ [ "no desc", "(b - 1) != y && (y - 1) != p" ],
-             [ "two desc", "((b - 1) == y && (y - 1) != p) || ((b - 1) != y && (y - 1) == p)" ],
-             [ "three desc", "(b - 1) == y && (y - 1) == p" ] ]);
+function ascending(b, y, p)
+{
+    var count = 1;
+    if ((b + 1) == y) count += 1;
+    if ((y + 1) == p) count += 1;
+    return count;
+}
+
+addFilters([ [ "no asc", "ascending(b,y,p) == 1" ],
+             [ "two asc", "ascending(b,y,p) == 2" ],
+             [ "three asc", "ascending(b,y,p) == 3" ] ]);
+
+addFilters([ [ "no desc", "descending(b,y,p) == 1" ],
+             [ "two desc", "descending(b,y,p) == 2" ],
+             [ "three desc", "descending(b,y,p) == 3" ] ]);
+
+addFilters([ [ "no asc or desc", "ascending(b,y,p) == 1 && descending(b,y,p) == 1" ],
+             [ "two asc or desc", "ascending(b,y,p) == 2 || descending(b,y,p) == 2" ],
+             [ "three asc or desc", "ascending(b,y,p) == 3 || descending(b,y,p) == 3" ] ]);
 
 addFilters([ [ "blue is even", "b % 2 == 0" ], [ "blue is odd", "b % 2 != 0" ] ]);
 addFilters([ [ "yellow is even", "y % 2 == 0" ], [ "yellow is odd", "y % 2 != 0" ] ]);
@@ -188,6 +210,12 @@ addFilters([ [ "no odds", "oddCount(b, y, p) == 0" ],
              [ "two odd", "oddCount(b, y, p) == 2" ] ]);
 
 unique_solutions = [];
+function clearUniqueSolutions()
+{
+    unique_solutions = [];
+    refresh();
+}
+
 var solution = [];
 for (let b = 1; b <= 5; b++)
 {
@@ -225,9 +253,16 @@ function oddCount(b, y, p)
     return 3 - evenCount(b, y, p);
 }
 
+var permute_calls = 0;
 // runs through every permutation of the activated rows
 function permute(unique)
 {
+    permute_calls += 1;
+    if (permute_calls > 1000)
+    {
+        permute_calls = 0;
+        return;
+    }
     var row_list = filterTable.getElementsByTagName('tr');
     var activateTheNextCheckbox = false;
     for (var rowIdx = row_list.length - 1; rowIdx >= 0; rowIdx -= 1)
@@ -313,7 +348,7 @@ function specialRefresh()
 {
     var result = '';
     var count = 0;
-    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ, KK;
+    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ, KK, LL, MM;
     for (const input of document.getElementsByTagName('input'))
     {
         if (input.value != '' && input.type == "number")
@@ -355,7 +390,7 @@ function refresh(reset = true)
     var prev_blue = -1;
     var prev_yellow = 1;
     var count = 0;
-    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ, KK;
+    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ, KK, LL, MM;
     for (const input of document.getElementsByTagName('input'))
     {
         if (input.value != '' && input.type == "number")
