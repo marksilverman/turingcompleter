@@ -256,14 +256,14 @@ function permute(allRows, rowIdx)
     var prevCheckbox = null;
     var row = allRows[rowIdx];
     var allInputs = row.getElementsByTagName("input");
+    for (let i = 1; i < allInputs.length; i++)
+    {
+        var input = allInputs[i];
+        if (input.type == "checkbox")
+            input.checked = false;
+    }
     if (allInputs[0].checked)
     {
-        for (let i = 1; i < allInputs.length; i++)
-        {
-            var input = allInputs[i];
-            if (input.type == "checkbox")
-                input.checked = false;
-        }
         for (let i = 1; i < allInputs.length; i++)
         {
             var input = allInputs[i];
