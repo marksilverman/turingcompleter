@@ -114,9 +114,9 @@ addFilters([ [ "yellow + blue < DD", "(y + b) < DD" ], [ "yellow + blue == DD", 
 addFilters([ [ "purple + blue < EE", "(p + b) < EE" ], [ "purple + blue == EE", "(p + b) == EE" ], [ "purple + blue > EE", "(p + b) > EE" ], [ "EE", null ] ]);
 addFilters([ [ "yellow + purple < FF", "(y + p) < FF" ], [ "yellow + purple == FF", "(y + p) == FF" ], [ "yellow + purple > FF", "(y + p) > FF" ], [ "FF", null ] ]);
 addFilters([ [ "blue + yellow + purple < GG", "(b + y + p) < GG" ],
-    [ "blue + yellow + purple == GG", "(b + y + p) == GG" ],
-    [ "blue + yellow + purple > GG", "(b + y + p) > GG" ],
-    [ "GG", null ] ]);
+             [ "blue + yellow + purple == GG", "(b + y + p) == GG" ],
+             [ "blue + yellow + purple > GG", "(b + y + p) > GG" ],
+             [ "GG", null ] ]);
 
 addFilters([ [ "no HH", "b != HH && y != HH && p != HH" ],
              [ "one HH", "((b == HH) + (y == HH) + (p == HH)) == 1" ],
@@ -132,7 +132,7 @@ addFilters([ [ "no JJ", "b != JJ && y != JJ && p != JJ" ],
 
 addFilters([ [ "blue < KK", "b < KK" ], [ "yellow < KK", "y < KK" ], [ "purple < KK", "p < KK" ], [ "KK", null ] ]);
 addFilters([ [ "blue = LL", "b == LL" ], [ "yellow = LL", "y == LL" ], [ "purple = LL", "p == LL" ], [ "LL", null ] ]);
-addFilters([ [ "blue > MM", "b > MM" ], [ "yeMMow > MM", "y > MM" ], [ "purple > MM", "p > MM" ], [ "MM", null ] ]);
+addFilters([ [ "blue > MM", "b > MM" ], [ "yellow > MM", "y > MM" ], [ "purple > MM", "p > MM" ], [ "MM", null ] ]);
 
 addFilters([ [ "blue is smallest", "b < y && b < p" ],
              [ "yellow is smallest", "y < b && y < p" ],
