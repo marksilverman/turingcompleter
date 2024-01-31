@@ -20,9 +20,8 @@
     <p>
         Turing Completer
         <br><input type="button" value="UNCHECK" onClick="uncheck()"/>
-        <input type="button" value="PERMUTE (UNIQUES)" onClick="permute(true)"/>
+        <input type="button" value="PERMUTE (UNIQUES)" onClick="permuteUniques(true)"/>
         <input type="button" value="PERMUTE (ALL)" onClick="permute(false)"/>
-        <input type="button" value="CLEAR SOLUTIONS" onClick="clearUniqueSolutions()"/>
         <br><div id="solution"></div>
         <br><div id="tableContainer"></div>
         <br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
@@ -42,7 +41,10 @@ function toggleEnabled(checkbox)
 {
     var row = checkbox.parentNode.parentNode;
     if (row.style.backgroundColor == "")
+    {
         row.style.backgroundColor = activated;
+        filterTable.insertBefore(row, filterTable.firstChild);
+    }
     else if (row.style.backgroundColor == activated)
         row.style.backgroundColor = locked;
     else if (row.style.backgroundColor == locked)
@@ -251,6 +253,12 @@ function evenCount(b, y, p)
 function oddCount(b, y, p)
 {
     return 3 - evenCount(b, y, p);
+}
+
+function permuteUniques()
+{
+    clearUniqueSolutions();
+    permute(true);
 }
 
 var permute_calls = 0;
