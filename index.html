@@ -88,7 +88,7 @@ function addFilters(filters)
         }
 
         var label = document.createElement("label");
-        label.id = row.id + "-" + id + "-label";
+        label.id = input.id + "-label";
         label.htmlFor = input.id;
         label.textContent = " " + desc;
 
@@ -113,9 +113,22 @@ document.getElementById("tableContainer").appendChild(filterTable);
 addFilters([ [ "blue < AA", "b < AA" ], [ "blue == AA", "b == AA" ], [ "blue > AA", "b > AA" ], [ "AA", null ] ]);
 addFilters([ [ "yellow < BB", "y < BB" ], [ "yellow == BB", "y == BB" ], [ "yellow > BB", "y > BB" ], [ "BB", null ] ]);
 addFilters([ [ "purple < CC", "p < CC" ], [ "purple == CC", "p == CC" ], [ "purple > CC", "p > CC" ], [ "CC", null ] ]);
-addFilters([ [ "yellow + blue < DD", "(y + b) < DD" ], [ "yellow + blue == DD", "(y + b) == DD" ], [ "yellow + blue > DD", "(y + b) > DD" ], [ "DD", null ] ]);
-addFilters([ [ "purple + blue < EE", "(p + b) < EE" ], [ "purple + blue == EE", "(p + b) == EE" ], [ "purple + blue > EE", "(p + b) > EE" ], [ "EE", null ] ]);
-addFilters([ [ "yellow + purple < FF", "(y + p) < FF" ], [ "yellow + purple == FF", "(y + p) == FF" ], [ "yellow + purple > FF", "(y + p) > FF" ], [ "FF", null ] ]);
+
+addFilters([
+    [ "yellow + blue < DD", "(y + b) < DD" ],
+    [ "yellow + blue == DD", "(y + b) == DD" ],
+    [ "yellow + blue > DD", "(y + b) > DD" ],
+    [ "DD", null ] ]);
+addFilters([
+    [ "purple + blue < EE", "(p + b) < EE" ],
+    [ "purple + blue == EE", "(p + b) == EE" ],
+    [ "purple + blue > EE", "(p + b) > EE" ],
+    [ "EE", null ] ]);
+addFilters([
+    [ "yellow + purple < FF", "(y + p) < FF" ],
+    [ "yellow + purple == FF", "(y + p) == FF" ],
+    [ "yellow + purple > FF", "(y + p) > FF" ],
+    [ "FF", null ] ]);
 
 addFilters([ [ "blue + yellow = DD", "(b + y) == NN" ], [ "blue + purple = NN", "(b + p) == NN" ], [ "yellow + purple = NN", "(y + p) == NN" ], [ "NN", null ] ]);
 addFilters([ [ "blue + yellow > DD", "(b + y) > OO" ], [ "blue + purple > OO", "(b + p) > OO" ], [ "yellow + purple > OO", "(y + p) > OO" ], [ "OO", null ] ]);
@@ -161,8 +174,8 @@ addFilters([
     [ "no SS", "b != SS && y != SS && p != SS" ],
     [ "one SS", "((b == SS) + (y == SS) + (p == SS)) == 1" ],
     [ "two SS", "((b == SS) + (y == SS) + (p == SS)) == 2" ],
-    [ "RR", null ], [ "SS", null ]
-]);
+    [ "RR", null ],
+    [ "SS", null ]]);
 
 addFilters([ [ "blue is smallest", "b < y && b < p" ],
              [ "yellow is smallest", "y < b && y < p" ],
@@ -196,16 +209,16 @@ addFilters([
     [ "yellow > purple", "y > p" ],
     [ "blue < purple", "b < p" ],
     [ "blue = purple", "b == p" ],
-    [ "blue > purple", "b > p" ]
-]);
+    [ "blue > purple", "b > p" ]]);
 
 addFilters([ [ "blue < yellow", "b < y" ], [ "blue = yellow", "b == y" ], [ "blue > yellow", "b > y" ] ]);
 addFilters([ [ "yellow < purple", "y < p" ], [ "yellow = purple", "y == p" ], [ "yellow > purple", "y > p" ] ]);
 addFilters([ [ "blue < purple", "b < p" ], [ "blue = purple", "b == p" ], [ "blue > purple", "b > p" ] ]);
 
-addFilters([ [ "ascending", "b < y && y < p" ],
-             [ "descending", "b > y && y > p" ],
-             [ "no order", "!(b < y && y < p) && !(b > y && y > p)" ] ]);
+addFilters([
+    [ "ascending", "b < y && y < p" ],
+    [ "descending", "b > y && y > p" ],
+    [ "no order", "!(b < y && y < p) && !(b > y && y > p)" ]]);
 
 function descending(b, y, p)
 {
