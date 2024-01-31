@@ -71,30 +71,31 @@ function addFilters(filters)
     {
         count += 1;
         var id = row.id + desc.replace(/ /g, '_');
-        var checkbox = document.createElement("input");
-        checkbox.id = id;
+        var input = document.createElement("input");
 
         var cell = document.createElement("td");
 
         if (test == null)
         {
-            checkbox.type = "number";
+            input.id = desc;
+            input.type = "number";
         }
         else
         {
-            checkbox.type = "checkbox";
-            checkbox.onchange = function(){ refresh() };
+            input.id = id;
+            input.type = "checkbox";
+            input.onchange = function(){ refresh() };
         }
 
         var label = document.createElement("label");
-        label.id = id + "-label";
-        label.htmlFor = id;
+        label.id = row.id + "-" + id + "-label";
+        label.htmlFor = input.id;
         label.textContent = " " + desc;
 
         cell.appendChild(label);
-        cell.appendChild(checkbox);
+        cell.appendChild(input);
         row.appendChild(cell);
-        if (test) filterList.push([ checkbox, test ]);
+        if (test) filterList.push([ input, test ]);
     }
     while (count < 10)
     {
