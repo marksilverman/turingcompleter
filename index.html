@@ -20,7 +20,7 @@
     <p>
         Turing Completer
         <br><input type="button" value="UNCHECK" onClick="uncheck()"/>
-        <input type="button" value="PERMUTE (UNIQUES)" onClick="permuteUniques(true)"/>
+        <input type="button" value="PERMUTE (UNIQUES)" onClick="permute(true)"/>
         <input type="button" value="PERMUTE (ALL)" onClick="permute(false)"/>
         <br><div id="solution"></div>
         <br><div id="tableContainer"></div>
@@ -96,7 +96,7 @@ function addFilters(filters)
         row.appendChild(cell);
         if (test) filterList.push([ checkbox, test ]);
     }
-    while (count < 4)
+    while (count < 10)
     {
         count += 1;
         row.appendChild(document.createElement("td"));
@@ -115,6 +115,11 @@ addFilters([ [ "purple < CC", "p < CC" ], [ "purple == CC", "p == CC" ], [ "purp
 addFilters([ [ "yellow + blue < DD", "(y + b) < DD" ], [ "yellow + blue == DD", "(y + b) == DD" ], [ "yellow + blue > DD", "(y + b) > DD" ], [ "DD", null ] ]);
 addFilters([ [ "purple + blue < EE", "(p + b) < EE" ], [ "purple + blue == EE", "(p + b) == EE" ], [ "purple + blue > EE", "(p + b) > EE" ], [ "EE", null ] ]);
 addFilters([ [ "yellow + purple < FF", "(y + p) < FF" ], [ "yellow + purple == FF", "(y + p) == FF" ], [ "yellow + purple > FF", "(y + p) > FF" ], [ "FF", null ] ]);
+
+addFilters([ [ "blue + yellow = DD", "(b + y) == NN" ], [ "blue + purple = NN", "(b + p) == NN" ], [ "yellow + purple = NN", "(y + p) == NN" ], [ "NN", null ] ]);
+addFilters([ [ "blue + yellow > DD", "(b + y) > OO" ], [ "blue + purple > OO", "(b + p) > OO" ], [ "yellow + purple > OO", "(y + p) > OO" ], [ "OO", null ] ]);
+addFilters([ [ "blue + yellow < DD", "(b + y) < PP" ], [ "blue + purple < PP", "(b + p) < PP" ], [ "yellow + purple < PP", "(y + p) < PP" ], [ "PP", null ] ]);
+
 addFilters([ [ "blue + yellow + purple < GG", "(b + y + p) < GG" ],
              [ "blue + yellow + purple == GG", "(b + y + p) == GG" ],
              [ "blue + yellow + purple > GG", "(b + y + p) > GG" ],
@@ -132,9 +137,32 @@ addFilters([ [ "no JJ", "b != JJ && y != JJ && p != JJ" ],
              [ "one JJ", "((b == JJ) + (y == JJ) + (p == JJ)) == 1" ],
              [ "two JJ", "((b == JJ) + (y == JJ) + (p == JJ)) == 2" ], [ "JJ", null ] ]);
 
+addFilters([
+    [ "no RR", "b != RR && y != RR && p != RR" ],
+    [ "one RR", "((b == RR) + (y == RR) + (p == RR)) == 1" ],
+    [ "two RR", "((b == RR) + (y == RR) + (p == RR)) == 2" ],
+    [ "no SS", "b != SS && y != SS && p != SS" ],
+    [ "one SS", "((b == SS) + (y == SS) + (p == SS)) == 1" ],
+    [ "two SS", "((b == SS) + (y == SS) + (p == SS)) == 2" ],
+    [ "RR", null ], [ "SS", null ]
+]);
+
+
 addFilters([ [ "blue < KK", "b < KK" ], [ "yellow < KK", "y < KK" ], [ "purple < KK", "p < KK" ], [ "KK", null ] ]);
 addFilters([ [ "blue = LL", "b == LL" ], [ "yellow = LL", "y == LL" ], [ "purple = LL", "p == LL" ], [ "LL", null ] ]);
 addFilters([ [ "blue > MM", "b > MM" ], [ "yellow > MM", "y > MM" ], [ "purple > MM", "p > MM" ], [ "MM", null ] ]);
+
+addFilters([
+    [ "blue < QQ", "b < QQ" ],
+    [ "yellow < QQ", "y < QQ" ],
+    [ "purple < QQ", "p < QQ" ],
+    [ "blue = QQ", "b == QQ" ],
+    [ "yellow = QQ", "y == QQ" ],
+    [ "purple = QQ", "p == QQ" ],
+    [ "blue > QQ", "b > QQ" ],
+    [ "yellow > QQ", "y > QQ" ],
+    [ "purple > QQ", "p > QQ" ],
+    [ "QQ", null ] ]);
 
 addFilters([ [ "blue is smallest", "b < y && b < p" ],
              [ "yellow is smallest", "y < b && y < p" ],
@@ -147,6 +175,29 @@ addFilters([ [ "blue is largest", "b > y && b > p" ],
 addFilters([ [ "blue largest or tied", "(b > y && b >= p) || (b >= y && b > p)" ],
              [ "yellow largest or tied", "(y > b && y >= p) || (y >= b && y > p)" ],
              [ "purple largest or tied", "(p > b && p >= y) || (p >= b && p > y)" ] ]);
+
+addFilters([ [ "blue smallest or tied", "(b < y && b <= p) || (b <= y && b < p)" ],
+             [ "yellow smallest or tied", "(y < b && y <= p) || (y <= b && y < p)" ],
+             [ "purple smallest or tied", "(p < b && p <= y) || (p <= b && p < y)" ] ]);
+
+addFilters([ [ "blue smallest", "b < y && b < p" ],
+             [ "yellow smallest", "y < b && y < p" ],
+             [ "purple smallest", "p < b && p < y" ],
+             [ "blue largest", "b > y && b > p" ],
+             [ "yellow largest", "y > b && y > p" ],
+             [ "purple largest", "p > b && p > y" ] ]);
+
+addFilters([
+    [ "blue1 < yellow1", "b < y" ],
+    [ "blue1 = yellow1", "b == y" ],
+    [ "blue1 > yellow1", "b > y" ],
+    [ "yellow1 < purple1", "y < p" ],
+    [ "yellow1 = purple1", "y == p" ],
+    [ "yellow1 > purple1", "y > p" ],
+    [ "blue1 < purple1", "b < p" ],
+    [ "blue1 = purple1", "b == p" ],
+    [ "blue1 > purple1", "b > p" ]
+]);
 
 addFilters([ [ "blue < yellow", "b < y" ], [ "blue = yellow", "b == y" ], [ "blue > yellow", "b > y" ] ]);
 addFilters([ [ "yellow < purple", "y < p" ], [ "yellow = purple", "y == p" ], [ "yellow > purple", "y > p" ] ]);
@@ -356,7 +407,7 @@ function specialRefresh()
 {
     var result = '';
     var count = 0;
-    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ, KK, LL, MM;
+    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ, KK, LL, MM, NN, OO, PP, QQ, RR, SS;
     for (const input of document.getElementsByTagName('input'))
     {
         if (input.value != '' && input.type == "number")
@@ -398,7 +449,7 @@ function refresh(reset = true)
     var prev_blue = -1;
     var prev_yellow = 1;
     var count = 0;
-    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ, KK, LL, MM;
+    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ, KK, LL, MM, NN, OO, PP, QQ, RR, SS;
     for (const input of document.getElementsByTagName('input'))
     {
         if (input.value != '' && input.type == "number")
