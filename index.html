@@ -70,7 +70,7 @@ function addFilters(filters)
     for (const [ desc, test ] of filters)
     {
         count += 1;
-        var id = desc.replace(/ /g, '_');
+        var id = row.id + desc.replace(/ /g, '_');
         var checkbox = document.createElement("input");
         checkbox.id = id;
 
@@ -137,17 +137,6 @@ addFilters([ [ "no JJ", "b != JJ && y != JJ && p != JJ" ],
              [ "one JJ", "((b == JJ) + (y == JJ) + (p == JJ)) == 1" ],
              [ "two JJ", "((b == JJ) + (y == JJ) + (p == JJ)) == 2" ], [ "JJ", null ] ]);
 
-addFilters([
-    [ "no RR", "b != RR && y != RR && p != RR" ],
-    [ "one RR", "((b == RR) + (y == RR) + (p == RR)) == 1" ],
-    [ "two RR", "((b == RR) + (y == RR) + (p == RR)) == 2" ],
-    [ "no SS", "b != SS && y != SS && p != SS" ],
-    [ "one SS", "((b == SS) + (y == SS) + (p == SS)) == 1" ],
-    [ "two SS", "((b == SS) + (y == SS) + (p == SS)) == 2" ],
-    [ "RR", null ], [ "SS", null ]
-]);
-
-
 addFilters([ [ "blue < KK", "b < KK" ], [ "yellow < KK", "y < KK" ], [ "purple < KK", "p < KK" ], [ "KK", null ] ]);
 addFilters([ [ "blue = LL", "b == LL" ], [ "yellow = LL", "y == LL" ], [ "purple = LL", "p == LL" ], [ "LL", null ] ]);
 addFilters([ [ "blue > MM", "b > MM" ], [ "yellow > MM", "y > MM" ], [ "purple > MM", "p > MM" ], [ "MM", null ] ]);
@@ -163,6 +152,16 @@ addFilters([
     [ "yellow > QQ", "y > QQ" ],
     [ "purple > QQ", "p > QQ" ],
     [ "QQ", null ] ]);
+
+addFilters([
+    [ "no RR", "b != RR && y != RR && p != RR" ],
+    [ "one RR", "((b == RR) + (y == RR) + (p == RR)) == 1" ],
+    [ "two RR", "((b == RR) + (y == RR) + (p == RR)) == 2" ],
+    [ "no SS", "b != SS && y != SS && p != SS" ],
+    [ "one SS", "((b == SS) + (y == SS) + (p == SS)) == 1" ],
+    [ "two SS", "((b == SS) + (y == SS) + (p == SS)) == 2" ],
+    [ "RR", null ], [ "SS", null ]
+]);
 
 addFilters([ [ "blue is smallest", "b < y && b < p" ],
              [ "yellow is smallest", "y < b && y < p" ],
@@ -188,15 +187,15 @@ addFilters([ [ "blue smallest", "b < y && b < p" ],
              [ "purple largest", "p > b && p > y" ] ]);
 
 addFilters([
-    [ "blue1 < yellow1", "b < y" ],
-    [ "blue1 = yellow1", "b == y" ],
-    [ "blue1 > yellow1", "b > y" ],
-    [ "yellow1 < purple1", "y < p" ],
-    [ "yellow1 = purple1", "y == p" ],
-    [ "yellow1 > purple1", "y > p" ],
-    [ "blue1 < purple1", "b < p" ],
-    [ "blue1 = purple1", "b == p" ],
-    [ "blue1 > purple1", "b > p" ]
+    [ "blue < yellow", "b < y" ],
+    [ "blue = yellow", "b == y" ],
+    [ "blue > yellow", "b > y" ],
+    [ "yellow < purple", "y < p" ],
+    [ "yellow = purple", "y == p" ],
+    [ "yellow > purple", "y > p" ],
+    [ "blue < purple", "b < p" ],
+    [ "blue = purple", "b == p" ],
+    [ "blue > purple", "b > p" ]
 ]);
 
 addFilters([ [ "blue < yellow", "b < y" ], [ "blue = yellow", "b == y" ], [ "blue > yellow", "b > y" ] ]);
