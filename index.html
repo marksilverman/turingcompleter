@@ -4,13 +4,25 @@
     <meta charset="utf-8">
     <style type="text/css">
         body { margin: 20px; }
-        html, body, button {
+        html, body {
             font-family: monospace;
             font-size: 20px;
         }
         table {
+            margin: 10px;
             table-layout: auto;
             border: 1px solid;
+        }
+        td {
+            white-space: nowrap;
+            border: 1px dotted #ccc;
+            padding: 8px;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(odd) {
+            background-color: #ffffff;
         }
     </style>
     <title>Turing Completer</title>
@@ -19,9 +31,9 @@
 <body onload="main();">
     <p>
         Turing Completer
-        <br><input type="button" value="UNCHECK" onClick="uncheck()"/>
-        <input type="button" value="PERMUTE (UNIQUES)" onClick="permute(true)"/>
-        <input type="button" value="PERMUTE (ALL)" onClick="permute(false)"/>
+        <br><input type="button" style="height: 40px" value="UNCHECK" onClick="uncheck()"/>
+        <input type="button" style="height: 40px" value="PERMUTE (UNIQUES)" onClick="permute(true)"/>
+        <input type="button" style="height: 40px" value="PERMUTE (ALL)" onClick="permute(false)"/>
         <br><div id="solution"></div>
         <br><div id="tableContainer"></div>
         <br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
@@ -37,9 +49,17 @@ function show(info) { solutionElement.innerHTML += info; }
 var activated = "lightblue";
 var locked = "lightgreen";
 
+function toggleCheckbox(checkbox)
+{
+    if (!checkbox.checked)
+        return;
+    const row = checkbox.parentNode.parentNode;
+    for (const other_checkbox of row.querySelectorAll('input[type="checkbox"]'))
+        other_checkbox.checked = (other_checkbox == checkbox);
+}
 function toggleEnabled(checkbox)
 {
-    var row = checkbox.parentNode.parentNode;
+    const row = checkbox.parentNode.parentNode;
     if (row.style.backgroundColor == "")
     {
         row.style.backgroundColor = activated;
@@ -60,8 +80,8 @@ function addFilters(filters)
 
     var rowStateButton = document.createElement("button");
     rowStateButton.onclick = function() { toggleEnabled(this); };
-    rowStateButton.style.width = "20px";
-    rowStateButton.style.height = "20px";
+    rowStateButton.style.width = "40px";
+    rowStateButton.style.height = "40px";
     rowStateButton.style.backgroundColor = "orange";
     var cell = document.createElement("td");
     cell.appendChild(rowStateButton);
@@ -84,6 +104,7 @@ function addFilters(filters)
         {
             input.id = id;
             input.type = "checkbox";
+            input.onclick = function() { toggleCheckbox(this); };
             input.onchange = function(){ refresh() };
         }
 
@@ -134,9 +155,9 @@ addFilters([ [ "blue + yellow = DD", "(b + y) == NN" ], [ "blue + purple = NN", 
 addFilters([ [ "blue + yellow > DD", "(b + y) > OO" ], [ "blue + purple > OO", "(b + p) > OO" ], [ "yellow + purple > OO", "(y + p) > OO" ], [ "OO", null ] ]);
 addFilters([ [ "blue + yellow < DD", "(b + y) < PP" ], [ "blue + purple < PP", "(b + p) < PP" ], [ "yellow + purple < PP", "(y + p) < PP" ], [ "PP", null ] ]);
 
-addFilters([ [ "blue + yellow + purple < GG", "(b + y + p) < GG" ],
-             [ "blue + yellow + purple == GG", "(b + y + p) == GG" ],
-             [ "blue + yellow + purple > GG", "(b + y + p) > GG" ],
+addFilters([ [ "total < GG", "(b + y + p) < GG" ],
+             [ "total == GG", "(b + y + p) == GG" ],
+             [ "total > GG", "(b + y + p) > GG" ],
              [ "GG", null ] ]);
 
 addFilters([ [ "no HH", "b != HH && y != HH && p != HH" ],
@@ -251,6 +272,15 @@ addFilters([ [ "no asc or desc", "ascending(b,y,p) == 1 && descending(b,y,p) == 
 addFilters([ [ "blue is even", "b % 2 == 0" ], [ "blue is odd", "b % 2 != 0" ] ]);
 addFilters([ [ "yellow is even", "y % 2 == 0" ], [ "yellow is odd", "y % 2 != 0" ] ]);
 addFilters([ [ "purple is even", "p % 2 == 0" ], [ "purple is odd", "p % 2 != 0" ] ]);
+
+addFilters([
+    [ "blue is even", "b % 2 == 0" ],
+    [ "blue is odd", "b % 2 != 0" ],
+    [ "yellow is even", "y % 2 == 0" ],
+    [ "yellow is odd", "y % 2 != 0" ],
+    [ "purple is even", "p % 2 == 0" ],
+    [ "purple is odd", "p % 2 != 0" ]
+    ]);
 
 addFilters([ [ "total is even", "(b + y + p) % 2 == 0" ], [ "total is odd", "(b + y + p) % 2 != 0" ] ]);
 addFilters([ [ "total mult 3", "(b + y + p) % 3 == 0" ],
