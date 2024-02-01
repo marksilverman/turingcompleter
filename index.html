@@ -8,6 +8,9 @@
             font-family: monospace;
             font-size: 20px;
         }
+        #solution {
+            font-size: 24px;
+        }
         table {
             margin: 10px;
             table-layout: auto;
@@ -16,7 +19,7 @@
         td {
             white-space: nowrap;
             border: 1px dotted #ccc;
-            padding: 8px;
+            padding: 4px;
         }
         tr:nth-child(even) {
             background-color: #f2f2f2;
@@ -98,6 +101,7 @@ function addFilters(filters)
         {
             input.id = desc;
             input.type = "number";
+            input.style.height = "30px";
         }
         else
         {
@@ -556,13 +560,18 @@ function refresh(reset = true)
 
 document.addEventListener('keydown', function (event)
 {
-    if (event.ctrlKey || event.metaKey)
+    if (event.ctrlKey)
     {
         if (event.key === 'p')
+        {
             permute();
+            event.preventDefault();
+        }
         else if (event.key === 'u')
+        {
             permuteUniques();
-        event.preventDefault();
+            event.preventDefault();
+        }
     }
 });
 
