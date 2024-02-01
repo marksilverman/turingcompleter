@@ -92,8 +92,7 @@ function addFilters(filters)
         count += 1;
         var id = row.id + desc.replace(/ /g, '_');
         var input = document.createElement("input");
-
-        var cell = document.createElement("td");
+        input.onchange = function(){ refresh() };
 
         if (test == null)
         {
@@ -105,7 +104,6 @@ function addFilters(filters)
             input.id = id;
             input.type = "checkbox";
             input.onclick = function() { toggleCheckbox(this); };
-            input.onchange = function(){ refresh() };
         }
 
         var label = document.createElement("label");
@@ -113,6 +111,7 @@ function addFilters(filters)
         label.htmlFor = input.id;
         label.textContent = " " + desc;
 
+        var cell = document.createElement("td");
         cell.appendChild(label);
         cell.appendChild(input);
         row.appendChild(cell);
@@ -554,6 +553,19 @@ function refresh(reset = true)
     }
     return solutions;
 }
+
+document.addEventListener('keydown', function (event)
+{
+    if (event.ctrlKey || event.metaKey)
+    {
+        if (event.key === 'p')
+            permute();
+        else if (event.key === 'u')
+            permuteUniques();
+        event.preventDefault();
+    }
+});
+
 refresh();
 
 </script>
