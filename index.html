@@ -61,13 +61,27 @@ function toggleCheckbox(checkbox)
     for (const other_checkbox of row.querySelectorAll('input[type="checkbox"]'))
         other_checkbox.checked = (other_checkbox == checkbox);
 }
-function toggleEnabled(checkbox)
+function toggleEnabled(button)
 {
-    const row = checkbox.parentNode.parentNode;
+    const row = button.parentNode.parentNode;
     if (row.style.backgroundColor == "")
     {
         row.style.backgroundColor = activated;
         filterTable.insertBefore(row, filterTable.firstChild);
+        var foundOne = false;
+        const checkbox_list = row.querySelectorAll('input[type="checkbox"]');
+        for (const checkbox of checkbox_list)
+        {
+            if (checkbox.checked)
+            {
+                foundOne = true;
+                break;
+            }
+        }
+        if (!foundOne)
+        {
+            checkbox_list[0].checked = true;
+        }
     }
     else if (row.style.backgroundColor == activated)
         row.style.backgroundColor = locked;
@@ -550,7 +564,6 @@ function refresh(reset = true)
         prev_yellow = y;
     }
     show("<br><br>count: " + count);
-    show("<br><br>applied " + applied + " filters<br>");
     if (unique_solutions.length)
     {
         show("<br>unique solutions:");
