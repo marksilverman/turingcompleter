@@ -38,6 +38,7 @@
         <input type="button" style="height: 40px" value="PERMUTE (UNIQUES)" onClick="permute(true)"/>
         <input type="button" style="height: 40px" value="PERMUTE (ALL)" onClick="permute(false)"/>
         <input type="button" style="height: 40px" value="ALL UNIQUE SOLUTIONS" onClick="findAllUniques()"/>
+        <input type="button" style="height: 40px" value="CLEAR UNIQUE SOLUTIONS" onClick="clearUniqueSolutions()"/>
         <br><div id="solution"></div>
         <br><div id="tableContainer"></div>
         <br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
@@ -55,12 +56,35 @@ var locked = "lightgreen";
 
 function toggleCheckbox(checkbox)
 {
+    const cell = checkbox.parentNode;
     if (!checkbox.checked)
+    {
+        //cell.style.fontWeight = 'normal';
         return;
+    }
+    //cell.style.fontWeight = 'bold';
     const row = checkbox.parentNode.parentNode;
     for (const other_checkbox of row.querySelectorAll('input[type="checkbox"]'))
-        other_checkbox.checked = (other_checkbox == checkbox);
+    {
+        if (other_checkbox != checkbox)
+        {
+            //other_checkbox.parentNode.style.fontWeight = 'normal';
+            other_checkbox.checked = false;
+        }
+    }
 }
+
+function toggleCell(cell)
+{
+    const checkbox_list = cell.querySelectorAll('input[type="checkbox"]');
+    if (checkbox_list.length)
+    {
+        const checkbox = checkbox_list[0];
+        checkbox.checked = !checkbox.checked;
+        toggleCheckbox(checkbox);
+    }
+}
+
 function toggleEnabled(button)
 {
     const row = button.parentNode.parentNode;
@@ -131,6 +155,7 @@ function addFilters(filters)
         label.textContent = " " + desc;
 
         var cell = document.createElement("td");
+        cell.onclick = function() { toggleCell(this); };
         cell.appendChild(label);
         cell.appendChild(input);
         row.appendChild(cell);
@@ -368,12 +393,18 @@ function findAllUniques()
     while (permute(true)) {}
 }
 
+function clearUniqueSolutions()
+{
+    unique_solutions = [];
+    refresh();
+}
+
 var permute_calls = 0;
 // runs through every permutation of the activated rows
 function permute(unique)
 {
     permute_calls += 1;
-    if (permute_calls > 1000)
+    if (permute_calls > 10000)
     {
         permute_calls = 0;
         return false;
