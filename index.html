@@ -37,6 +37,7 @@
         <br><input type="button" style="height: 40px" value="UNCHECK" onClick="uncheck()"/>
         <input type="button" style="height: 40px" value="PERMUTE (UNIQUES)" onClick="permute(true)"/>
         <input type="button" style="height: 40px" value="PERMUTE (ALL)" onClick="permute(false)"/>
+        <input type="button" style="height: 40px" value="ALL UNIQUE SOLUTIONS" onClick="findAllUniques()"/>
         <br><div id="solution"></div>
         <br><div id="tableContainer"></div>
         <br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
@@ -309,11 +310,6 @@ addFilters([ [ "no odds", "oddCount(b, y, p) == 0" ],
              [ "two odd", "oddCount(b, y, p) == 2" ] ]);
 
 unique_solutions = [];
-function clearUniqueSolutions()
-{
-    unique_solutions = [];
-    refresh();
-}
 
 var solution = [];
 for (let b = 1; b <= 5; b++)
@@ -352,10 +348,10 @@ function oddCount(b, y, p)
     return 3 - evenCount(b, y, p);
 }
 
-function permuteUniques()
+function findAllUniques()
 {
-    clearUniqueSolutions();
-    permute(true);
+    unique_solutions = [];
+    while (permute(true)) {}
 }
 
 var permute_calls = 0;
@@ -366,7 +362,7 @@ function permute(unique)
     if (permute_calls > 1000)
     {
         permute_calls = 0;
-        return;
+        return false;
     }
     var row_list = filterTable.getElementsByTagName('tr');
     var activateTheNextCheckbox = false;
@@ -407,7 +403,7 @@ function permute(unique)
 
     var new_solutions = refresh();
     if (!unique)
-        return;
+        return false;
 
     // we only want unique solutions
     if (new_solutions.length != 1)
@@ -444,8 +440,14 @@ function permute(unique)
     }
     // if we make it here, we found a unique and valid possible solution
     if (!unique_solutions.includes(new_solutions[0]))
+    {
         unique_solutions.push(new_solutions[0])
+        refresh();
+        return true; // there may be more
+    }
     refresh();
+    // found a repeat so we're probably done
+    return false;
 }
 
 // this version applies all the filters and reports unique solutions
@@ -567,11 +569,11 @@ document.addEventListener('keydown', function (event)
             permute();
             event.preventDefault();
         }
-        else if (event.key === 'u')
-        {
-            permuteUniques();
-            event.preventDefault();
-        }
+//        else if (event.key === 'u')
+//        {
+//            permuteUniques();
+//            event.preventDefault();
+//        }
     }
 });
 
