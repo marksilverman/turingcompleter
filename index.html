@@ -275,6 +275,31 @@ addFilters([
     [ "blue = purple", "b == p" ],
     [ "blue > purple", "b > p" ]]);
 
+addFilters([
+    [ "blue < yellow", "b < y" ],
+    [ "blue = yellow", "b == y" ],
+    [ "blue > yellow", "b > y" ],
+    [ "blue < purple", "b < p" ],
+    [ "blue = purple", "b == p" ],
+    [ "blue > purple", "b > p" ]]);
+
+addFilters([
+    [ "yellow < blue", "y < b" ],
+    [ "yellow = blue", "y == b" ],
+    [ "yellow > blue", "y > b" ],
+    [ "yellow < purple", "y < p" ],
+    [ "yellow = purple", "y == p" ],
+    [ "yellow > purple", "y > p" ]]);
+
+addFilters([
+    [ "purple < blue", "p < b" ],
+    [ "purple = blue", "p == b" ],
+    [ "purple > blue", "p > b" ],
+    [ "purple < yellow", "p < y" ],
+    [ "purple = yellow", "p == y" ],
+    [ "purple > yellow", "p > y" ]]);
+
+
 addFilters([ [ "blue < yellow", "b < y" ], [ "blue = yellow", "b == y" ], [ "blue > yellow", "b > y" ] ]);
 addFilters([ [ "yellow < purple", "y < p" ], [ "yellow = purple", "y == p" ], [ "yellow > purple", "y > p" ] ]);
 addFilters([ [ "blue < purple", "b < p" ], [ "blue = purple", "b == p" ], [ "blue > purple", "b > p" ] ]);
