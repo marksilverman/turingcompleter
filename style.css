@@ -1,0 +1,24 @@
+body { margin: 20px; }
+html, body {
+    font-family: monospace;
+    font-size: 20px;
+}
+#solution {
+    font-size: 24px;
+}
+table {
+    margin: 10px;
+    table-layout: auto;
+    border: 1px solid;
+}
+td {
+    white-space: nowrap;
+    border: 1px dotted #ccc;
+    padding: 4px;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+tr:nth-child(odd) {
+    background-color: #ffffff;
+}

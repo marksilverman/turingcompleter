@@ -2,43 +2,16 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <style type="text/css">
-        body { margin: 20px; }
-        html, body {
-            font-family: monospace;
-            font-size: 20px;
-        }
-        #solution {
-            font-size: 24px;
-        }
-        table {
-            margin: 10px;
-            table-layout: auto;
-            border: 1px solid;
-        }
-        td {
-            white-space: nowrap;
-            border: 1px dotted #ccc;
-            padding: 4px;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        tr:nth-child(odd) {
-            background-color: #ffffff;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css">
     <title>Turing Completer</title>
 </head>
 
-<body onload="main();">
+<body">
     <p>
         Turing Completer
         <br><input type="button" style="height: 40px" value="UNCHECK" onClick="uncheck()"/>
-        <input type="button" style="height: 40px" value="PERMUTE (UNIQUES)" onClick="permute(true)"/>
-        <input type="button" style="height: 40px" value="PERMUTE (ALL)" onClick="permute(false)"/>
-        <input type="button" style="height: 40px" value="ALL UNIQUE SOLUTIONS" onClick="findAllUniques()"/>
-        <input type="button" style="height: 40px" value="CLEAR UNIQUE SOLUTIONS" onClick="clearUniqueSolutions()"/>
+        <input type="button" style="height: 40px" value="STEP" onClick="permute(false)"/>
+        <input type="button" style="height: 40px" value="FIND ALL UNIQUE SOLUTIONS" onClick="findAllUniques()"/>
         <br><div id="solution"></div>
         <br><div id="tableContainer"></div>
         <br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
@@ -183,11 +156,13 @@ addFilters([
     [ "yellow + blue == DD", "(y + b) == DD" ],
     [ "yellow + blue > DD", "(y + b) > DD" ],
     [ "DD", null ] ]);
+
 addFilters([
     [ "purple + blue < EE", "(p + b) < EE" ],
     [ "purple + blue == EE", "(p + b) == EE" ],
     [ "purple + blue > EE", "(p + b) > EE" ],
     [ "EE", null ] ]);
+
 addFilters([
     [ "yellow + purple < FF", "(y + p) < FF" ],
     [ "yellow + purple == FF", "(y + p) == FF" ],
@@ -414,14 +389,48 @@ function oddCount(b, y, p)
 
 function findAllUniques()
 {
+    permute_calls = 0;
     unique_solutions = [];
-    while (permute(true)) {}
-}
 
-function clearUniqueSolutions()
-{
-    unique_solutions = [];
-    refresh();
+    // set the first checkbox in each activated row
+    for (const row of filterTable.getElementsByTagName('tr'))
+    {
+        var first = true;
+        for (var checkbox of row.querySelectorAll('input[type="checkbox"]'))
+        {
+            if (row.style.backgroundColor == activated)
+            {
+                checkbox.checked = first;
+                first = false;
+            }
+            else if (row.style.backgroundColor == "")
+                checkbox.checked = false;
+        }
+    }
+
+    // run through every permutation
+    do
+    {
+        permute(true);
+        // assume we are back at the start
+        // i.e. each first checkbox is checked
+        var back_at_start = true;
+        for (const row of filterTable.getElementsByTagName('tr'))
+        {
+            if (row.style.backgroundColor == activated)
+            {
+                const first_checkbox = row.querySelectorAll('input[type="checkbox"]')[0];
+                if (first_checkbox.checked == false)
+                {
+                    // found a first checkbox that is unchecked
+                    // we are not back at the start
+                    // so the while loop should continue
+                    back_at_start = false;
+                    break;
+                }
+            }
+        }
+    } while (!back_at_start);
 }
 
 var permute_calls = 0;
@@ -431,8 +440,9 @@ function permute(unique)
     permute_calls += 1;
     if (permute_calls > 10000)
     {
+        alert('too many calls to permute');
         permute_calls = 0;
-        return false;
+        return;
     }
     var row_list = filterTable.getElementsByTagName('tr');
     var activateTheNextCheckbox = false;
@@ -479,7 +489,7 @@ function permute(unique)
     if (new_solutions.length != 1)
     {
         // this solution was not unique
-        return permute(true);
+        return;
     }
 
     // this solution was unique
@@ -500,7 +510,8 @@ function permute(unique)
                 // there's still only one solution
                 // so this verifier was useless
                 // keep searching
-                return permute(true);
+                permute(true);
+                return;
             }
             // there's more than one solution
             // this particular verifier was meaningful
@@ -513,55 +524,14 @@ function permute(unique)
     {
         unique_solutions.push(new_solutions[0])
         refresh();
-        return true; // there may be more
+        return;
     }
-    refresh();
-    // found a repeat so we're probably done
-    return false;
 }
 
-// this version applies all the filters and reports unique solutions
-function specialRefresh()
+// apply all the filters and show the current solution set
+function refresh()
 {
-    var result = '';
-    var count = 0;
-    var AA, BB, CC, DD, EE, FF, GG, HH, II, JJ, KK, LL, MM, NN, OO, PP, QQ, RR, SS;
-    for (const input of document.getElementsByTagName('input'))
-    {
-        if (input.value != '' && input.type == "number")
-             eval(input.id + "=" + input.value);
-    }
-
-    for (const item of solution)
-    {
-        var include = true;
-        var b = item.blue;
-        var y = item.yellow;
-        var p = item.purple;
-
-        // apply filters
-        for (const [checkbox, test] of filterList)
-        {
-            if (checkbox.checked && !eval(test))
-                include = false;
-        }
-        
-        if (include)
-        {
-            if (count > 0)
-                return;
-            result += b.toString() + y.toString() + p.toString() + " ";
-            count += 1;
-        }
-    }
-    if (count)
-        show(result + "<br>");
-}
-
-// this version applies all the filters and shows the current solution set
-function refresh(reset = true)
-{
-    if (reset) solutionElement.innerHTML = "";
+    solutionElement.innerHTML = "";
 
     var solutions = [ ];
     var prev_blue = -1;
@@ -638,11 +608,6 @@ document.addEventListener('keydown', function (event)
             permute();
             event.preventDefault();
         }
-//        else if (event.key === 'u')
-//        {
-//            permuteUniques();
-//            event.preventDefault();
-//        }
     }
 });
 
