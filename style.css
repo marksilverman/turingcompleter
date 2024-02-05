@@ -1,15 +1,24 @@
 body { margin: 20px; }
-html, body {
+html, body, p {
     font-family: monospace;
     font-size: 20px;
 }
-#solution {
+#count, #uniqueSolutions, #solution {
     font-size: 24px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
 }
+
+img {
+    opacity: 0.2;
+}
+
 table {
     margin: 10px;
     table-layout: auto;
     border: 1px solid;
+
 }
 td {
     white-space: nowrap;

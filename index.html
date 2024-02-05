@@ -9,10 +9,16 @@
 <body">
     <p>
         Turing Completer
-        <br><input type="button" style="height: 40px" value="UNCHECK" onClick="uncheck()"/>
+        <br><br><input type="button" style="height: 40px" value="UNCHECK" onClick="uncheck()"/>
         <input type="button" style="height: 40px" value="STEP" onClick="permute(false)"/>
         <input type="button" style="height: 40px" value="FIND ALL UNIQUE SOLUTIONS" onClick="findAllUniques()"/>
         <br><div id="solution"></div>
+        <br>
+        <label for="count">count: </label>
+        <input type="text" id="count" value="">
+        <label for="uniqueSolutions">unique solutions: </label>
+        <input type="text" id="uniqueSolutions" value="">
+
         <br><div id="tableContainer"></div>
         <br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
     </p>
@@ -162,9 +168,9 @@ addFilters([
     [ "yellow + purple > FF", "(y + p) > FF" ],
     [ "FF", null ] ]);
 
-addFilters([ [ "blue + yellow = DD", "(b + y) == NN" ], [ "blue + purple = NN", "(b + p) == NN" ], [ "yellow + purple = NN", "(y + p) == NN" ], [ "NN", null ] ]);
-addFilters([ [ "blue + yellow > DD", "(b + y) > OO" ], [ "blue + purple > OO", "(b + p) > OO" ], [ "yellow + purple > OO", "(y + p) > OO" ], [ "OO", null ] ]);
-addFilters([ [ "blue + yellow < DD", "(b + y) < PP" ], [ "blue + purple < PP", "(b + p) < PP" ], [ "yellow + purple < PP", "(y + p) < PP" ], [ "PP", null ] ]);
+addFilters([ [ "blue + yellow = NN", "(b + y) == NN" ], [ "blue + purple = NN", "(b + p) == NN" ], [ "yellow + purple = NN", "(y + p) == NN" ], [ "NN", null ] ]);
+addFilters([ [ "blue + yellow > OO", "(b + y) > OO" ], [ "blue + purple > OO", "(b + p) > OO" ], [ "yellow + purple > OO", "(y + p) > OO" ], [ "OO", null ] ]);
+addFilters([ [ "blue + yellow < PP", "(b + y) < PP" ], [ "blue + purple < PP", "(b + p) < PP" ], [ "yellow + purple < PP", "(y + p) < PP" ], [ "PP", null ] ]);
 
 addFilters([ [ "total < GG", "(b + y + p) < GG" ],
              [ "total == GG", "(b + y + p) == GG" ],
@@ -411,8 +417,6 @@ function findAllUniques()
                 checkbox.checked = first;
                 first = false;
             }
-            // else if (ignored(row))
-            //     checkbox.checked = false;
         }
     }
 
@@ -493,10 +497,8 @@ function permute(unique)
     for (var row of row_list)
     {
         if (!activated(row)) continue;
-        for (var checkbox of row.querySelectorAll('input[type="checkbox"]'))
+        for (var checkbox of row.querySelectorAll('input[type="checkbox"]:checked'))
         {
-            if (!checkbox.checked) continue;
-
             // uncheck the box and see if the count has changed
             checkbox.checked = false;
             var more_solutions = refresh();
@@ -583,13 +585,17 @@ function refresh()
         prev_blue = b;
         prev_yellow = y;
     }
-    show("<br><br>count: " + count);
+    document.getElementById("count").value = count;        
+
     if (unique_solutions.length)
     {
-        show("<br>unique solutions:");
+        var msg = ""
         for (const s of unique_solutions)
-            show(" " + s);
+            msg = msg + " " + s;
+        document.getElementById("uniqueSolutions").value = msg;
     }
+    else
+    document.getElementById("uniqueSolutions").value = "none";
     return solutions;
 }
 
