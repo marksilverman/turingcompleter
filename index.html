@@ -437,17 +437,9 @@ function findAllUniques()
     } while (!finished);
 }
 
-var permute_calls = 0;
 // runs through every permutation of the activated rows
 function permute(unique)
 {
-    permute_calls += 1;
-    if (permute_calls > 10000)
-    {
-        alert('too many calls to permute');
-        permute_calls = 0;
-        return;
-    }
     var row_list = filterTable.getElementsByTagName('tr');
     var activateTheNextCheckbox = false;
     for (var rowIdx = row_list.length - 1; rowIdx >= 0; rowIdx -= 1)
@@ -513,8 +505,6 @@ function permute(unique)
             {
                 // there's still only one solution
                 // so this verifier was useless
-                // keep searching
-                permute(true);
                 return;
             }
             // there's more than one solution
