@@ -62,7 +62,7 @@ function toggleCell(cell)
 function toggleEnabled(button)
 {
     const row = button.parentNode.parentNode;
-    if (ignored(row))
+    if (getIgnored(row))
     {
         row.style.backgroundColor = activated_color;
         filterTable.insertBefore(row, filterTable.firstChild);
@@ -79,7 +79,7 @@ function toggleEnabled(button)
         if (!foundOne)
             checkbox_list[0].checked = true;
     }
-    else if (activated(row))
+    else if (getActivated(row))
         row.style.backgroundColor = locked_color;
     else if (row.style.backgroundColor == locked_color)
         row.style.backgroundColor = "";
@@ -386,17 +386,17 @@ function uncheck()
     refresh();
 }
 
-function activated(row)
+function getActivated(row)
 {
     return row.style.backgroundColor == activated_color;
 }
 
-function locked(row)
+function getLocked(row)
 {
     return row.style.backgroundColor == locked_color;
 }
 
-function ignored(row)
+function getIgnored(row)
 {
     return row.style.backgroundColor == ignored_color;
 }
@@ -412,7 +412,7 @@ function findAllUniques()
         var first = true;
         for (var checkbox of row.querySelectorAll('input[type="checkbox"]'))
         {
-            if (activated(row))
+            if (getActivated(row))
             {
                 checkbox.checked = first;
                 first = false;
@@ -427,7 +427,7 @@ function findAllUniques()
         var finished = true;
         for (const row of filterTable.getElementsByTagName('tr'))
         {
-            if (activated(row))
+            if (getActivated(row))
             {
                 const first_checkbox = row.querySelectorAll('input[type="checkbox"]')[0];
                 if (first_checkbox.checked == false)
@@ -451,7 +451,7 @@ function permute(unique)
         var row = row_list[rowIdx];
         var checkbox_list = row.querySelectorAll('input[type="checkbox"]');
 
-        if (!activated(row)) continue;
+        if (!getActivated(row)) continue;
 
         for (var checkbox of checkbox_list)
         {
@@ -496,7 +496,7 @@ function permute(unique)
     // but we need to make sure all the verifiers were meaningful
     for (var row of row_list)
     {
-        if (!activated(row)) continue;
+        if (!getActivated(row)) continue;
         for (var checkbox of row.querySelectorAll('input[type="checkbox"]:checked'))
         {
             // uncheck the box and see if the count has changed
