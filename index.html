@@ -234,13 +234,13 @@ addFilters([ [ "blue is largest", "b > y && b > p" ],
              [ "yellow is largest", "y > b && y > p" ],
              [ "purple is largest", "p > b && p > y" ] ]);
 
-addFilters([ [ "blue largest or tied", "(b > y && b >= p) || (b >= y && b > p)" ],
-             [ "yellow largest or tied", "(y > b && y >= p) || (y >= b && y > p)" ],
-             [ "purple largest or tied", "(p > b && p >= y) || (p >= b && p > y)" ] ]);
+addFilters([ [ "blue largest or tied", "b >= y && b >= p" ],
+             [ "yellow largest or tied", "y >= b && y >= p" ],
+             [ "purple largest or tied", "p >= b && p >= y" ] ]);
 
-addFilters([ [ "blue smallest or tied", "(b < y && b <= p) || (b <= y && b < p)" ],
-             [ "yellow smallest or tied", "(y < b && y <= p) || (y <= b && y < p)" ],
-             [ "purple smallest or tied", "(p < b && p <= y) || (p <= b && p < y)" ] ]);
+addFilters([ [ "blue smallest or tied", "b <= y && b <= p" ],
+             [ "yellow smallest or tied", "y <= b && y <= p" ],
+             [ "purple smallest or tied", "p <= b && p <= y" ] ]);
 
 addFilters([ [ "blue smallest", "b < y && b < p" ],
              [ "yellow smallest", "y < b && y < p" ],
