@@ -4,11 +4,15 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>Turing Completer</title>
+    <div class="custom-input">
+    <label for="fontSize">font size: </label>
+    <input class="custom-input" value="24" type="number" id="fontSize" onChange="updateFontSize()">
+    </div>
 </head>
 
-<body">
+<body>
     <p>
-        Turing Completer
+        <br>Turing Completer
         <br><br><input type="button" style="height: 40px" value="UNCHECK" onClick="uncheck()"/>
         <input type="button" style="height: 40px" value="STEP" onClick="permute(false)"/>
         <input type="button" style="height: 40px" value="FIND ALL UNIQUE SOLUTIONS" onClick="findAllUniques()"/>
@@ -610,6 +614,16 @@ document.addEventListener('keydown', function (event)
         }
     }
 });
+
+function updateFontSize()
+{
+      const size = document.getElementById('fontSize').value;
+      for (const element of document.querySelectorAll('#tableContainer'))
+      {
+         element.style.fontSize = size + 'px';
+      };
+}
+
 
 refresh();
 
