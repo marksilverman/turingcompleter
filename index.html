@@ -30,26 +30,26 @@
 
 // interesting note: if the total is <= 6, there can't be a triple number
 
-filterCount = 0;
 var solutionElement = document.getElementById("solution");
 function show(info) { solutionElement.innerHTML += info; }
 
-var activated_color = "lightblue";
-var locked_color = "lightgreen";
-var ignored_color = "";
+const activated_color = "lightblue";
+const locked_color = "lightgreen";
+const ignored_color = "";
 
 function toggleCheckbox(checkbox)
 {
-    const cell = checkbox.parentNode;
-    if (!checkbox.checked)
-        return;
-
-    const row = checkbox.parentNode.parentNode;
-    for (const other_checkbox of row.querySelectorAll('input[type="checkbox"]'))
+    if (checkbox.checked)
     {
-        if (other_checkbox != checkbox)
-            other_checkbox.checked = false;
+        // when going from unchecked to checked, we uncheck all other checkboxes in this row
+        const row = checkbox.parentNode.parentNode;
+        for (const other_checkbox of row.querySelectorAll('input[type="checkbox"]'))
+        {
+            if (other_checkbox != checkbox)
+                other_checkbox.checked = false;
+        }
     }
+    refresh();
 }
 
 function toggleCell(cell)
@@ -66,7 +66,7 @@ function toggleCell(cell)
 function toggleEnabled(button)
 {
     const row = button.parentNode.parentNode;
-    if (ignored(row))
+    if (getIgnored(row))
     {
         row.style.backgroundColor = activated_color;
         filterTable.insertBefore(row, filterTable.firstChild);
@@ -83,13 +83,16 @@ function toggleEnabled(button)
         if (!foundOne)
             checkbox_list[0].checked = true;
     }
-    else if (activated(row))
+    else if (getActivated(row))
         row.style.backgroundColor = locked_color;
     else if (row.style.backgroundColor == locked_color)
         row.style.backgroundColor = "";
+    refresh();
 }
 
-function addFilters(filters)
+filterCount = 0;
+
+function addFilters(filters, var1 = null, var2 = null)
 {
     var count = 0;
     var row = document.createElement("tr");
@@ -111,19 +114,9 @@ function addFilters(filters)
         var id = row.id + desc.replace(/ /g, '_');
         var input = document.createElement("input");
         input.onchange = function(){ refresh() };
-
-        if (test == null)
-        {
-            input.id = desc;
-            input.type = "number";
-            input.style.height = "30px";
-        }
-        else
-        {
-            input.id = id;
-            input.type = "checkbox";
-            input.onclick = function() { toggleCheckbox(this); };
-        }
+        input.id = id;
+        input.type = "checkbox";
+        input.onclick = function() { toggleCheckbox(this); };
 
         var label = document.createElement("label");
         label.id = input.id + "-label";
@@ -137,6 +130,10 @@ function addFilters(filters)
         row.appendChild(cell);
         if (test) filterList.push([ input, test ]);
     }
+
+    addVariable(row, var1);
+    addVariable(row, var2);
+
     while (count < 10)
     {
         count += 1;
@@ -146,56 +143,73 @@ function addFilters(filters)
     filterTable.appendChild(row);
 }
 
+function addVariable(row, variable)
+{
+    if (variable == null ) return;
+    var input = document.createElement("input");
+    input.onchange = function(){ refresh() };
+
+    input.id = variable;
+    input.type = "number";
+    input.style.height = "30px";
+
+    var label = document.createElement("label");
+    label.id = input.id + "-label";
+    label.htmlFor = input.id;
+    label.textContent = " " + variable;
+
+    var cell = document.createElement("td");
+    cell.appendChild(label);
+    cell.appendChild(input);
+    row.appendChild(cell);
+}
+
 var filterList = [ ];
 var filterTable = document.createElement("table");
 document.getElementById("tableContainer").appendChild(filterTable);
 
-addFilters([ [ "blue < AA", "b < AA" ], [ "blue == AA", "b == AA" ], [ "blue > AA", "b > AA" ], [ "AA", null ] ]);
-addFilters([ [ "yellow < BB", "y < BB" ], [ "yellow == BB", "y == BB" ], [ "yellow > BB", "y > BB" ], [ "BB", null ] ]);
-addFilters([ [ "purple < CC", "p < CC" ], [ "purple == CC", "p == CC" ], [ "purple > CC", "p > CC" ], [ "CC", null ] ]);
+addFilters([ [ "blue < AA", "b < AA" ], [ "blue = AA", "b == AA" ], [ "blue > AA", "b > AA" ] ], "AA");
+addFilters([ [ "yellow < BB", "y < BB" ], [ "yellow = BB", "y == BB" ], [ "yellow > BB", "y > BB" ] ], "BB");
+addFilters([ [ "purple < CC", "p < CC" ], [ "purple = CC", "p == CC" ], [ "purple > CC", "p > CC" ] ], "CC");
 
 addFilters([
     [ "yellow + blue < DD", "(y + b) < DD" ],
-    [ "yellow + blue == DD", "(y + b) == DD" ],
-    [ "yellow + blue > DD", "(y + b) > DD" ],
-    [ "DD", null ] ]);
+    [ "yellow + blue = DD", "(y + b) == DD" ],
+    [ "yellow + blue > DD", "(y + b) > DD" ] ], "DD");
 
 addFilters([
     [ "purple + blue < EE", "(p + b) < EE" ],
-    [ "purple + blue == EE", "(p + b) == EE" ],
-    [ "purple + blue > EE", "(p + b) > EE" ],
-    [ "EE", null ] ]);
+    [ "purple + blue = EE", "(p + b) == EE" ],
+    [ "purple + blue > EE", "(p + b) > EE" ] ], "EE");
 
 addFilters([
     [ "yellow + purple < FF", "(y + p) < FF" ],
-    [ "yellow + purple == FF", "(y + p) == FF" ],
-    [ "yellow + purple > FF", "(y + p) > FF" ],
-    [ "FF", null ] ]);
+    [ "yellow + purple = FF", "(y + p) == FF" ],
+    [ "yellow + purple > FF", "(y + p) > FF" ] ], "FF");
 
-addFilters([ [ "blue + yellow = NN", "(b + y) == NN" ], [ "blue + purple = NN", "(b + p) == NN" ], [ "yellow + purple = NN", "(y + p) == NN" ], [ "NN", null ] ]);
-addFilters([ [ "blue + yellow > OO", "(b + y) > OO" ], [ "blue + purple > OO", "(b + p) > OO" ], [ "yellow + purple > OO", "(y + p) > OO" ], [ "OO", null ] ]);
-addFilters([ [ "blue + yellow < PP", "(b + y) < PP" ], [ "blue + purple < PP", "(b + p) < PP" ], [ "yellow + purple < PP", "(y + p) < PP" ], [ "PP", null ] ]);
+addFilters([ [ "blue + yellow = NN", "(b + y) == NN" ], [ "blue + purple = NN", "(b + p) == NN" ], [ "yellow + purple = NN", "(y + p) == NN" ] ], "NN");
+addFilters([ [ "blue + yellow > OO", "(b + y) > OO" ], [ "blue + purple > OO", "(b + p) > OO" ], [ "yellow + purple > OO", "(y + p) > OO" ] ], "OO" );
+addFilters([ [ "blue + yellow < PP", "(b + y) < PP" ], [ "blue + purple < PP", "(b + p) < PP" ], [ "yellow + purple < PP", "(y + p) < PP" ] ], "PP");
 
 addFilters([ [ "total < GG", "(b + y + p) < GG" ],
-             [ "total == GG", "(b + y + p) == GG" ],
-             [ "total > GG", "(b + y + p) > GG" ],
-             [ "GG", null ] ]);
+             [ "total = GG", "(b + y + p) == GG" ],
+             [ "total > GG", "(b + y + p) > GG" ] ], "GG");
 
 addFilters([ [ "no HH", "b != HH && y != HH && p != HH" ],
              [ "one HH", "((b == HH) + (y == HH) + (p == HH)) == 1" ],
-             [ "two HH", "((b == HH) + (y == HH) + (p == HH)) == 2" ], [ "HH", null ] ]);
+             [ "two HH", "((b == HH) + (y == HH) + (p == HH)) == 2" ] ], "HH");
 
 addFilters([ [ "no II", "b != II && y != II && p != II" ],
              [ "one II", "((b == II) + (y == II) + (p == II)) == 1" ],
-             [ "two II", "((b == II) + (y == II) + (p == II)) == 2" ], [ "II", null ] ]);
+             [ "two II", "((b == II) + (y == II) + (p == II)) == 2" ] ], "II");
 
 addFilters([ [ "no JJ", "b != JJ && y != JJ && p != JJ" ],
              [ "one JJ", "((b == JJ) + (y == JJ) + (p == JJ)) == 1" ],
-             [ "two JJ", "((b == JJ) + (y == JJ) + (p == JJ)) == 2" ], [ "JJ", null ] ]);
+             [ "two JJ", "((b == JJ) + (y == JJ) + (p == JJ)) == 2" ] ], "JJ");
 
-addFilters([ [ "blue < KK", "b < KK" ], [ "yellow < KK", "y < KK" ], [ "purple < KK", "p < KK" ], [ "KK", null ] ]);
-addFilters([ [ "blue = LL", "b == LL" ], [ "yellow = LL", "y == LL" ], [ "purple = LL", "p == LL" ], [ "LL", null ] ]);
-addFilters([ [ "blue > MM", "b > MM" ], [ "yellow > MM", "y > MM" ], [ "purple > MM", "p > MM" ], [ "MM", null ] ]);
+addFilters([ [ "blue < KK", "b < KK" ], [ "yellow < KK", "y < KK" ], [ "purple < KK", "p < KK" ] ], "KK");
+addFilters([ [ "blue = LL", "b == LL" ], [ "yellow = LL", "y == LL" ], [ "purple = LL", "p == LL" ] ], "LL");
+addFilters([ [ "blue > MM", "b > MM" ], [ "yellow > MM", "y > MM" ], [ "purple > MM", "p > MM" ] ], "MM");
 
 addFilters([
     [ "blue < QQ", "b < QQ" ],
@@ -206,8 +220,7 @@ addFilters([
     [ "purple = QQ", "p == QQ" ],
     [ "blue > QQ", "b > QQ" ],
     [ "yellow > QQ", "y > QQ" ],
-    [ "purple > QQ", "p > QQ" ],
-    [ "QQ", null ] ]);
+    [ "purple > QQ", "p > QQ" ] ], "QQ");
 
 addFilters([
     [ "no RR", "b != RR && y != RR && p != RR" ],
@@ -215,9 +228,7 @@ addFilters([
     [ "two RR", "((b == RR) + (y == RR) + (p == RR)) == 2" ],
     [ "no SS", "b != SS && y != SS && p != SS" ],
     [ "one SS", "((b == SS) + (y == SS) + (p == SS)) == 1" ],
-    [ "two SS", "((b == SS) + (y == SS) + (p == SS)) == 2" ],
-    [ "RR", null ],
-    [ "SS", null ]]);
+    [ "two SS", "((b == SS) + (y == SS) + (p == SS)) == 2" ] ], "RR", "SS");
 
 addFilters([ [ "blue is smallest", "b < y && b < p" ],
              [ "yellow is smallest", "y < b && y < p" ],
@@ -227,13 +238,13 @@ addFilters([ [ "blue is largest", "b > y && b > p" ],
              [ "yellow is largest", "y > b && y > p" ],
              [ "purple is largest", "p > b && p > y" ] ]);
 
-addFilters([ [ "blue largest or tied", "(b > y && b >= p) || (b >= y && b > p)" ],
-             [ "yellow largest or tied", "(y > b && y >= p) || (y >= b && y > p)" ],
-             [ "purple largest or tied", "(p > b && p >= y) || (p >= b && p > y)" ] ]);
+addFilters([ [ "blue largest or tied", "b >= y && b >= p" ],
+             [ "yellow largest or tied", "y >= b && y >= p" ],
+             [ "purple largest or tied", "p >= b && p >= y" ] ]);
 
-addFilters([ [ "blue smallest or tied", "(b < y && b <= p) || (b <= y && b < p)" ],
-             [ "yellow smallest or tied", "(y < b && y <= p) || (y <= b && y < p)" ],
-             [ "purple smallest or tied", "(p < b && p <= y) || (p <= b && p < y)" ] ]);
+addFilters([ [ "blue smallest or tied", "b <= y && b <= p" ],
+             [ "yellow smallest or tied", "y <= b && y <= p" ],
+             [ "purple smallest or tied", "p <= b && p <= y" ] ]);
 
 addFilters([ [ "blue smallest", "b < y && b < p" ],
              [ "yellow smallest", "y < b && y < p" ],
@@ -390,17 +401,17 @@ function uncheck()
     refresh();
 }
 
-function activated(row)
+function getActivated(row)
 {
     return row.style.backgroundColor == activated_color;
 }
 
-function locked(row)
+function getLocked(row)
 {
     return row.style.backgroundColor == locked_color;
 }
 
-function ignored(row)
+function getIgnored(row)
 {
     return row.style.backgroundColor == ignored_color;
 }
@@ -416,7 +427,7 @@ function findAllUniques()
         var first = true;
         for (var checkbox of row.querySelectorAll('input[type="checkbox"]'))
         {
-            if (activated(row))
+            if (getActivated(row))
             {
                 checkbox.checked = first;
                 first = false;
@@ -431,7 +442,7 @@ function findAllUniques()
         var finished = true;
         for (const row of filterTable.getElementsByTagName('tr'))
         {
-            if (activated(row))
+            if (getActivated(row))
             {
                 const first_checkbox = row.querySelectorAll('input[type="checkbox"]')[0];
                 if (first_checkbox.checked == false)
@@ -445,7 +456,7 @@ function findAllUniques()
     } while (!finished);
 }
 
-// runs through every permutation of the activated rows
+// try the next permutation of the activated rows
 function permute(unique)
 {
     var row_list = filterTable.getElementsByTagName('tr');
@@ -455,7 +466,7 @@ function permute(unique)
         var row = row_list[rowIdx];
         var checkbox_list = row.querySelectorAll('input[type="checkbox"]');
 
-        if (!activated(row)) continue;
+        if (!getActivated(row)) continue;
 
         for (var checkbox of checkbox_list)
         {
@@ -500,7 +511,7 @@ function permute(unique)
     // but we need to make sure all the verifiers were meaningful
     for (var row of row_list)
     {
-        if (!activated(row)) continue;
+        if (!getActivated(row)) continue;
         for (var checkbox of row.querySelectorAll('input[type="checkbox"]:checked'))
         {
             // uncheck the box and see if the count has changed
@@ -599,7 +610,7 @@ function refresh()
         document.getElementById("uniqueSolutions").value = msg;
     }
     else
-    document.getElementById("uniqueSolutions").value = "none";
+    document.getElementById("uniqueSolutions").value = "";
     return solutions;
 }
 
