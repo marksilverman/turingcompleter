@@ -3,6 +3,11 @@ html, body, p, input {
     font-family: monospace;
     font-size: 24px;
 }
+.mybutton
+{
+    background-color: #95b794;
+    height: 40px;
+}
 #count, #uniqueSolutions, #solution {
     font-size: 24px;
     background-size: cover;
