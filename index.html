@@ -7,31 +7,30 @@
 </head>
 
 <body>
-    <pre>
-        _______  __   __  ______    ___   __    _  _______    _______  _______  __   __  _______  ___      _______  _______  _______  ______   
+    <div class="container">
+        <div class="region" id="title">
+            <pre>
+         _______  __   __  ______    ___   __    _  _______    _______  _______  __   __  _______  ___      _______  _______  _______  ______   
         |       ||  | |  ||    _ |  |   | |  |  | ||       |  |       ||       ||  |_|  ||       ||   |    |       ||       ||       ||    _ |  
         |_     _||  | |  ||   | ||  |   | |   |_| ||    ___|  |       ||   _   ||       ||    _  ||   |    |    ___||_     _||    ___||   | ||  
           |   |  |  |_|  ||   |_||_ |   | |       ||   | __   |       ||  | |  ||       ||   |_| ||   |    |   |___   |   |  |   |___ |   |_||_ 
           |   |  |       ||    __  ||   | |  _    ||   ||  |  |      _||  |_|  ||       ||    ___||   |___ |    ___|  |   |  |    ___||    __  |
           |   |  |       ||   |  | ||   | | | |   ||   |_| |  |     |_ |       || ||_|| ||   |    |       ||   |___   |   |  |   |___ |   |  | |
           |___|  |_______||___|  |_||___| |_|  |__||_______|  |_______||_______||_|   |_||___|    |_______||_______|  |___|  |_______||___|  |_|</pre>
-    <p>
-        <input class="mybutton" type="button" value="UNCHECK" onClick="uncheck()"/>
-        <input class="mybutton" type="button" value="STEP" onClick="permute(false)"/>
-        <input class="mybutton" type="button" value="FIND ALL UNIQUE SOLUTIONS" onClick="findAllUniques()"/>
-        <label for="count">count: </label><input style="width: 60px" type="text" id="count" value="">
-        <br>
-        <div id="solution"></div>
-        <br>
-        <div id="details"></div>        
-        <br>
-        <div id="tableContainer"></div>
-        <br>
-        <br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/marksilverman/spiromaniac" property="cc:attributionName" rel="cc:attributionURL">Mark Silverman</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
-    </p>
-<script>
+        </div>
+        <div class="region" id="buttons">
+            <input class="mybutton" type="button" value="UNCHECK" onClick="uncheck()"/>
+            <input class="mybutton" type="button" value="STEP" onClick="permute(false)"/>
+            <input class="mybutton" type="button" value="FIND ALL UNIQUE SOLUTIONS" onClick="findAllUniques()"/>
+            <label for="count">count: </label><input style="width: 60px" type="text" id="count" value="">
+        </div>
+        <div class="region" id="solution"></div>
+        <div class="region" id="details"><br></div>        
+        <div class="region" id="tableContainer"></div>
+    </div>
+<br><br><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">Turing Completer</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
-// interesting note: if the total is <= 6, there can't be a triple number
+<script>
 
 var solutionElement = document.getElementById("solution");
 var detailsElement = document.getElementById("details");
@@ -41,7 +40,6 @@ function show(info) { solutionElement.innerHTML += info; }
 const activated_color = "lightblue";
 const locked_color = "lightgreen";
 const ignored_color = "";
-var fontSize = 24;
 
 function toggleCheckbox(checkbox)
 {
@@ -157,13 +155,13 @@ function addVariable(row, variable)
 
     input.id = variable;
     input.type = "number";
-    input.style.height = "30px";
-    input.style.width = "40px";
+    input.style.height = "40px";
+    input.style.width = "60px";
 
     var label = document.createElement("label");
     label.id = input.id + "-label";
     label.htmlFor = input.id;
-    label.textContent = " " + variable;
+    label.textContent = variable + ": ";
 
     var cell = document.createElement("td");
     cell.appendChild(label);
@@ -462,6 +460,8 @@ function findAllUniques()
             }
         }
     } while (!finished);
+    if (unique_solutions.length == 0)
+        detailsElement.innerHTML += "<br>none";
 }
 
 // try the next permutation of the activated rows
@@ -544,7 +544,8 @@ function permute(unique)
     {
         var details = "<br>" + new_solutions[0] + ":";
         var counter = 0;
-        unique_solutions.push(new_solutions[0])
+        unique_solutions.push(new_solutions[0]);
+
         // here; show active verifiers
         for (var row of row_list)
         {
@@ -559,6 +560,7 @@ function permute(unique)
                 }
             }
         }
+
         detailsElement.innerHTML += details;
         refresh();
         return;
@@ -627,13 +629,6 @@ function refresh()
         prev_yellow = y;
     }
     document.getElementById("count").value = count;        
-
-    if (unique_solutions.length)
-    {
-        var msg = ""
-        for (const s of unique_solutions)
-            msg = msg + " " + s;
-    }
     return solutions;
 }
 
@@ -647,27 +642,7 @@ document.addEventListener('keydown', function (event)
             event.preventDefault();
         }
     }
-    else if (event.keyCode === 122)
-    {
-        fontSize -= 1;
-        updateFontSize();
-        event.preventDefault();
-    }
-    else if (event.keyCode === 123)
-    {
-        fontSize += 1;
-        updateFontSize();
-        event.preventDefault();
-    }
-
 });
-
-function updateFontSize()
-{
-    for (const element of document.querySelectorAll('#tableContainer'))
-        element.style.fontSize = fontSize + 'px';
-}
-
 
 refresh();
 

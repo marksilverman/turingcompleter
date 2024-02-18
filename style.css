@@ -1,26 +1,44 @@
-body { margin: 20px; }
-html, body, p, input {
+
+html, body, p, input, div {
     font-family: monospace;
     font-size: 24px;
     text-align: center;
 }
-pre
-{
-    font-family: monospace;
-    font-size: 16px;
-    text-align: center;
-}
+
 .mybutton
 {
     background-color: #95b794;
     height: 40px;
 }
+
+.container
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.region
+{
+    flex: 1;
+    padding: 2px;
+    margin: 0 auto;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+#title { background-color: #83d3dca1; font-size: 16px; }
+#buttons { background-color:#ded58f;  }
+#solution { background-color: #bb83dca1; }
+#details { background-color: #c2c1c06f; }
+#tableContainer { background-color: #dcab83a1; }
+
 #count, #uniqueSolutions, #solution {
-    font-size: 24px;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
     text-align: center;
+
 }
 
 table {
