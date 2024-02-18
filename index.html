@@ -172,6 +172,18 @@ function addVariable(row, variable)
 var filterList = [ ];
 var filterTable = document.createElement("table");
 document.getElementById("tableContainer").appendChild(filterTable);
+filterTable.addEventListener("contextmenu", function(event)
+{
+    event.preventDefault();
+    var cell = event.target;
+    const label = cell.querySelector('label');
+    if (label)
+        cell.removeChild(label);
+    const checkbox = cell.querySelector('input[type="checkbox"]');
+    if (checkbox)
+        cell.removeChild(checkbox);
+    });
+
 
 addFilters([ [ "b < AA", "b < AA" ], [ "b = AA", "b == AA" ], [ "b > AA", "b > AA" ] ], "AA");
 addFilters([ [ "y < BB", "y < BB" ], [ "y = BB", "y == BB" ], [ "y > BB", "y > BB" ] ], "BB");
@@ -441,8 +453,12 @@ function findAllUniques()
     }
 
     //detailsElement.innerHTML = "unique solutions:";
-    var newTable = document.createElement("table");
-    newTable.id = "foo";
+    var newTable = document.getElementById("uniqueTable");
+    if (newTable)
+        newTable.parentNode.removeChild(newTable);
+    newTable = document.createElement("table");
+    newTable.id = "uniqueTable";
+    newTable.style.width = "70%";
     detailsElement.appendChild(newTable);
 
     // run through every permutation
@@ -464,9 +480,6 @@ function findAllUniques()
             }
         }
     } while (!finished);
-/*    if (unique_solutions.length == 0)
-        detailsElement.innerHTML += "<br>none";*/
-    //detailsElement.innerHTML += "</table>";
 }
 
 // try the next permutation of the activated rows
