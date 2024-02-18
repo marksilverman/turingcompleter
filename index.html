@@ -423,7 +423,6 @@ function getIgnored(row)
 
 function findAllUniques()
 {
-    detailsElement.innerHTML = "unique solutions:";
     permute_calls = 0;
     unique_solutions = [];
 
@@ -441,10 +440,15 @@ function findAllUniques()
         }
     }
 
+    //detailsElement.innerHTML = "unique solutions:";
+    var newTable = document.createElement("table");
+    newTable.id = "foo";
+    detailsElement.appendChild(newTable);
+
     // run through every permutation
     do
     {
-        permute(true);
+        permute(true, newTable);
         var finished = true;
         for (const row of filterTable.getElementsByTagName('tr'))
         {
@@ -460,12 +464,13 @@ function findAllUniques()
             }
         }
     } while (!finished);
-    if (unique_solutions.length == 0)
-        detailsElement.innerHTML += "<br>none";
+/*    if (unique_solutions.length == 0)
+        detailsElement.innerHTML += "<br>none";*/
+    //detailsElement.innerHTML += "</table>";
 }
 
 // try the next permutation of the activated rows
-function permute(unique)
+function permute(unique, newTable = null)
 {
     var row_list = filterTable.getElementsByTagName('tr');
     var activateTheNextCheckbox = false;
@@ -542,26 +547,27 @@ function permute(unique)
     // if we make it here, we found a unique and valid possible solution
     if (!unique_solutions.includes(new_solutions[0]))
     {
-        var details = "<br>" + new_solutions[0] + ":";
-        var counter = 0;
-        unique_solutions.push(new_solutions[0]);
+        var newRow = document.createElement("tr");
+        newTable.appendChild(newRow);
+        var newCell = document.createElement("td");
+        newCell.textContent = new_solutions[0];
+        newRow.appendChild(newCell);
 
+        unique_solutions.push(new_solutions[0]);
         // here; show active verifiers
         for (var row of row_list)
         {
             for (var checkbox of row.querySelectorAll('input[type="checkbox"]:checked'))
             {
-                const cell = checkbox.parentNode;
-                for (var label of cell.querySelectorAll('label'))
+                for (var label of checkbox.parentNode.querySelectorAll('label'))
                 {
-                    if (counter > 0) details += ", ";
-                    counter += 1;
-                    details += label.textContent;
+                    var newCell = document.createElement("td");
+                    newCell.textContent = label.textContent;
+                    newRow.appendChild(newCell);
                 }
             }
         }
 
-        detailsElement.innerHTML += details;
         refresh();
         return;
     }
