@@ -22,7 +22,9 @@
             <input class="mybutton" type="button" value="UNCHECK" onClick="uncheck()"/>
             <input class="mybutton" type="button" value="STEP" onClick="permute(false)"/>
             <input class="mybutton" type="button" value="FIND ALL UNIQUE SOLUTIONS" onClick="findAllUniques()"/>
-            <label for="count">count: </label><input style="width: 60px" type="text" id="count" value="">
+            <br><br><label for="count">count: </label><input style="width: 60px" type="text" id="count" value="" readonly>
+            <label for="time">time: </label><input style="width: 120px" type="text" id="time" value="" readonly>
+            <label for="permutations">permutations: </label><input style="width: 120px" type="text" id="permutations" value="" readonly>
         </div>
         <div class="region" id="solution"></div>
         <div class="region" id="details"><br></div>        
@@ -435,7 +437,7 @@ function getIgnored(row)
 
 function findAllUniques()
 {
-    permute_calls = 0;
+    var startTime = performance.now();
     unique_solutions = [];
 
     // set the first checkbox in each activated row
@@ -461,10 +463,12 @@ function findAllUniques()
     newTable.style.width = "70%";
     detailsElement.appendChild(newTable);
 
+    var permutations = 0;
     // run through every permutation
     do
     {
         permute(true, newTable);
+        permutations += 1;
         var finished = true;
         for (const row of filterTable.getElementsByTagName('tr'))
         {
@@ -480,6 +484,9 @@ function findAllUniques()
             }
         }
     } while (!finished);
+    var elapsedTime = (performance.now() - startTime) / 1000;
+    document.getElementById("time").value = elapsedTime.toFixed(2) + "sec";
+    document.getElementById("permutations").value = permutations;
 }
 
 // try the next permutation of the activated rows

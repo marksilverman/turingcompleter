@@ -20,11 +20,7 @@ html, body, p, input, div {
 .region
 {
     flex: 1;
-    padding: 2px;
-    margin: 0 auto;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
+    padding: 10px;
 }
 
 #title { background-color: #83d3dca1; font-size: 16px; }
