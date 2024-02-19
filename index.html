@@ -69,6 +69,13 @@ function toggleCell(cell)
     }
 }
 
+function removeRow(cell)
+{
+    const row = cell.parentNode.parentNode;
+    const table = row.parentNode;
+    table.removeChild(row);
+}
+
 function toggleEnabled(button)
 {
     const row = button.parentNode.parentNode;
@@ -588,13 +595,22 @@ function permute(unique, newTable = null)
     {
         var newRow = document.createElement("tr");
         newTable.appendChild(newRow);
+
+        var removeButton = document.createElement("button");
+        removeButton.onclick = function() { removeRow(this); };
+        removeButton.style.width = "40px";
+        removeButton.style.height = "40px";
+        removeButton.style.backgroundColor = "red";
         var newCell = document.createElement("td");
+        newCell.appendChild(removeButton);
+        newRow.appendChild(newCell);
+
+        newCell = document.createElement("td");
         newCell.textContent = new_solutions[0];
         newRow.appendChild(newCell);
 
         unique_solutions.push(new_solutions[0]);
         // here; show active verifiers
-        var rowIdx = 0;
         for (var row of row_list)
         {
             for (var checkbox of row.querySelectorAll('input[type="checkbox"]:checked'))
