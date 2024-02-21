@@ -47,11 +47,18 @@ table {
 td {
     white-space: nowrap;
     border: 1px dotted #ccc;
-    padding: 6px;
 }
 tr:nth-child(even) {
     background-color: #f5ecd4;
 }
 tr:nth-child(odd) {
     background-color: #ffffff;
+}
+
+th button
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #83d3dca1;
 }

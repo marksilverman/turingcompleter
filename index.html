@@ -461,7 +461,6 @@ function findAllUniques()
         }
     }
 
-    //detailsElement.innerHTML = "unique solutions:";
     var newTable = document.getElementById("uniqueTable");
     if (newTable)
         newTable.parentNode.removeChild(newTable);
@@ -491,9 +490,64 @@ function findAllUniques()
             }
         }
     } while (!finished);
+
+    var columnCnt = newTable.rows[0].cells.length;
+    var headerRow = newTable.insertRow(0);
+    for (var i = 0; i < columnCnt; i++)
+    {
+        var cell = headerRow.insertCell(i);
+        if (i == 0) continue;
+
+        var ascButton = document.createElement("button");
+        ascButton.textContent = "\u25B2";
+        ascButton.setAttribute("onclick", "sortTable(" + i + ", true)");
+
+        cell.appendChild(ascButton);
+
+        var descButton = document.createElement("button");
+        descButton.textContent = "\u25BC";
+        descButton.setAttribute("onclick", "sortTable(" + i + ", false)");
+        cell.appendChild(descButton);
+    }
+
     var elapsedTime = (performance.now() - startTime) / 1000;
     document.getElementById("time").value = elapsedTime.toFixed(2) + "sec";
     document.getElementById("permutations").value = permutations;
+}
+
+function sortTable(idx, ascending = true)
+{
+    var table = document.getElementById("uniqueTable");
+    var i, shouldSwitch = false, switching = true;
+    while (switching)
+    {
+        switching = false;
+        var rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++)
+        {
+            shouldSwitch = false;
+            var x = rows[i].getElementsByTagName("td")[idx];
+            var y = rows[i + 1].getElementsByTagName("td")[idx];
+            if (ascending)
+            {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())
+                {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+            else if (x.innerHTML.toLowerCase() <= y.innerHTML.toLowerCase())
+            {
+                shouldSwitch = true;
+                break;
+            }
+        }
+        if (shouldSwitch)
+        {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+        }
+    }
 }
 
 function hashCode(str)
