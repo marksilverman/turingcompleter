@@ -19,6 +19,7 @@
           |___|  |_______||___|  |_||___| |_|  |__||_______|  |_______||_______||_|   |_||___|    |_______||_______|  |___|  |_______||___|  |_|</pre>
         </div>
         <div class="region" id="buttons">
+            <input class="mybutton" type="button" value="TEST" onClick="test()"/>
             <input class="mybutton" type="button" value="UNCHECK" onClick="uncheck()"/>
             <input class="mybutton" type="button" value="STEP" onClick="permute(false)"/>
             <input class="mybutton" type="button" value="FIND ALL UNIQUE SOLUTIONS" onClick="findAllUniques()"/>
@@ -109,7 +110,7 @@ function addFilters(filters, var1 = null, var2 = null)
 {
     var count = 0;
     var row = document.createElement("tr");
-    row.id = "row" + filterCount;
+    row.id = "row_" + filterCount;
     filterCount += 1;
 
     var rowStateButton = document.createElement("button");
@@ -124,7 +125,7 @@ function addFilters(filters, var1 = null, var2 = null)
     for (const [ desc, test ] of filters)
     {
         count += 1;
-        var id = row.id + desc.replace(/ /g, '_');
+        var id = row.id + "_" + desc.replace(/ /g, '_');
         var input = document.createElement("input");
         input.onchange = function(){ refresh() };
         input.id = id;
@@ -516,6 +517,7 @@ function findAllUniques()
 
 function sortTable(idx, ascending = true)
 {
+    console.log('sortTable, i: ' + idx + ', ascending: ' + ascending);
     var table = document.getElementById("uniqueTable");
     var i, shouldSwitch = false, switching = true;
     while (switching)
@@ -527,15 +529,12 @@ function sortTable(idx, ascending = true)
             shouldSwitch = false;
             var x = rows[i].getElementsByTagName("td")[idx];
             var y = rows[i + 1].getElementsByTagName("td")[idx];
-            if (ascending)
+            if (ascending && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())
             {
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())
-                {
-                    shouldSwitch = true;
-                    break;
-                }
+                shouldSwitch = true;
+                break;
             }
-            else if (x.innerHTML.toLowerCase() <= y.innerHTML.toLowerCase())
+            else if (!ascending && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())
             {
                 shouldSwitch = true;
                 break;
@@ -547,6 +546,7 @@ function sortTable(idx, ascending = true)
             switching = true;
         }
     }
+    console.log('end of sortTable');
 }
 
 function hashCode(str)
@@ -757,6 +757,24 @@ function refresh()
     }
     document.getElementById("count").value = count;        
     return solutions;
+}
+
+function test()
+{
+    const stuff = [ "row_38_total_even", "row_41_triple_number", "row_10_b_<_KK", "row_20_b_largest_or_tied", "row_16_b_<_QQ", "row_23_b_<_y" ];
+    for (const row of filterTable.getElementsByTagName('tr'))
+    {
+        const button = row.querySelectorAll('button')[0];
+        const checkbox = row.querySelectorAll('input[type="checkbox"]')[0];
+        if (button == null || checkbox == null)
+            continue;
+        checkbox.checked = false;
+        const label = checkbox.parentNode.querySelectorAll('label')[0];
+        if (stuff.includes(checkbox.id))
+            toggleEnabled(button);
+    }
+    document.getElementById("QQ").value = "1";
+    document.getElementById("KK").value = "3";
 }
 
 document.addEventListener('keydown', function (event)
