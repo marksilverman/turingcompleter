@@ -213,10 +213,6 @@ addFilters([
     [ "y + p = FF", "(y + p) == FF" ],
     [ "y + p > FF", "(y + p) > FF" ] ], "FF");
 
-addFilters([ [ "b + y = NN", "(b + y) == NN" ], [ "b + p = NN", "(b + p) == NN" ], [ "y + p = NN", "(y + p) == NN" ] ], "NN");
-addFilters([ [ "b + y > OO", "(b + y) > OO" ], [ "b + p > OO", "(b + p) > OO" ], [ "y + p > OO", "(y + p) > OO" ] ], "OO" );
-addFilters([ [ "b + y < PP", "(b + y) < PP" ], [ "b + p < PP", "(b + p) < PP" ], [ "y + p < PP", "(y + p) < PP" ] ], "PP");
-
 addFilters([ [ "total < GG", "(b + y + p) < GG" ],
              [ "total = GG", "(b + y + p) == GG" ],
              [ "total > GG", "(b + y + p) > GG" ] ], "GG");
@@ -236,6 +232,10 @@ addFilters([ [ "no JJ", "b != JJ && y != JJ && p != JJ" ],
 addFilters([ [ "b < KK", "b < KK" ], [ "y < KK", "y < KK" ], [ "p < KK", "p < KK" ] ], "KK");
 addFilters([ [ "b = LL", "b == LL" ], [ "y = LL", "y == LL" ], [ "p = LL", "p == LL" ] ], "LL");
 addFilters([ [ "b > MM", "b > MM" ], [ "y > MM", "y > MM" ], [ "p > MM", "p > MM" ] ], "MM");
+
+addFilters([ [ "b + y = NN", "(b + y) == NN" ], [ "b + p = NN", "(b + p) == NN" ], [ "y + p = NN", "(y + p) == NN" ] ], "NN");
+addFilters([ [ "b + y > OO", "(b + y) > OO" ], [ "b + p > OO", "(b + p) > OO" ], [ "y + p > OO", "(y + p) > OO" ] ], "OO" );
+addFilters([ [ "b + y < PP", "(b + y) < PP" ], [ "b + p < PP", "(b + p) < PP" ], [ "y + p < PP", "(y + p) < PP" ] ], "PP");
 
 addFilters([
     [ "b < QQ", "b < QQ" ],
@@ -313,7 +313,6 @@ addFilters([
     [ "p < y", "p < y" ],
     [ "p = y", "p == y" ],
     [ "p > y", "p > y" ]]);
-
 
 addFilters([ [ "b < y", "b < y" ], [ "b = y", "b == y" ], [ "b > y", "b > y" ] ]);
 addFilters([ [ "y < p", "y < p" ], [ "y = p", "y == p" ], [ "y > p", "y > p" ] ]);
